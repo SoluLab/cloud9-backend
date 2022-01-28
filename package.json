@@ -1,0 +1,22 @@
+{
+  "name": "cloud9-backend",
+  "version": "1.0.0",
+  "description": "Cloud9 ICO Backend with eosio.js sdk integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoluLab/cloud9-backend.git"
+  },
+  "keywords": [
+    "cloud9-backend"
+  ],
+  "author": "Parth Kaloliya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SoluLab/cloud9-backend/issues"
+  },
+  "homepage": "https://github.com/SoluLab/cloud9-backend#readme"
+}
