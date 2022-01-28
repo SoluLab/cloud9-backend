@@ -1,0 +1,8 @@
+node_modules
+logs
+.env
+.vscode
+.history
+.env.local
+lib
+dist
