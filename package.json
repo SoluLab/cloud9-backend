@@ -6,12 +6,8 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "start": "npm run build && node lib/api/bin/www --exec babel-node",
-    "build": "npm run remove && babel ./src --out-dir lib --copy-files",
-    "build-prod": "npm run build && babel ./lib -d dist --copy-files",
-    "prod": "npm run build-prod && node --max-old-space-size=4096 dist/api/bin/www",
-    "dev": "nodemon ./src/api/bin/www --exec babel-node --presets @babel/preset-env",
-    "remove": "rm -rf dist lib"
+    "start": "node ./src/api/bin/www",
+    "dev": "nodemon ./src/api/bin/www"
   },
   "engines": {
     "node": "14.17.5"
@@ -30,10 +26,13 @@
   },
   "homepage": "https://github.com/SoluLab/cloud9-backend#readme",
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "axios": "^0.22.0",
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-rate-limit": "^6.2.0",
     "generate-password": "^1.6.1",
     "mongoose": "^5.12.5",
     "morgan": "^1.10.0",
