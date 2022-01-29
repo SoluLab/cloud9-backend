@@ -6,8 +6,8 @@ export default {
 	db: {
 		str:
 			process.env.NODE_ENV === 'production'
-				? process.env.SPOOKY_MONGO_STRING
-				: process.env.SPOOKY_MONGO_STRING,
+				? process.env.CLOUD_MONGO_STRING
+				: process.env.CLOUD_MONGO_STRING,
 		options: {
 			auto_reconnect: true,
 			poolSize: 200,
