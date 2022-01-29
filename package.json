@@ -1,0 +1,68 @@
+{
+  "name": "cloud9-backend",
+  "version": "1.0.0",
+  "description": "Cloud9 ICO Backend with eosio.js sdk integration",
+  "type": "module",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./src/api/bin/www",
+    "dev": "nodemon ./src/api/bin/www"
+  },
+  "engines": {
+    "node": "14.17.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoluLab/cloud9-backend.git"
+  },
+  "keywords": [
+    "cloud9-backend"
+  ],
+  "author": "Parth Kaloliya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SoluLab/cloud9-backend/issues"
+  },
+  "homepage": "https://github.com/SoluLab/cloud9-backend#readme",
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "axios": "^0.22.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^6.2.0",
+    "generate-password": "^1.6.1",
+    "mongoose": "^5.12.5",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-security": "^1.4.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.2.11",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "eslint --fix src/",
+      "pretty-quick — staged"
+    ]
+  }
+}
