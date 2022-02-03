@@ -29,6 +29,7 @@
     "app-root-path": "^3.0.0",
     "axios": "^0.22.0",
     "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
@@ -37,6 +38,7 @@
     "mongoose": "^5.12.5",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
+    "validator": "^13.7.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
