@@ -49,7 +49,7 @@ export const updateUserProfile = async (req, res) => {
 		return handleResponse({
 			res,
 			statusCode: 200,
-			msg: 'Profile fetched successfully',
+			msg: 'Profile updated successfully',
 			userData,
 		});
 	} catch (err) {
