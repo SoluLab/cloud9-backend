@@ -6,6 +6,7 @@
 import http from 'http';
 import app from '../app.js';
 import logger from '../config/logger.js';
+import db from '../connections/dbConnection.js';
 
 /**
  * Normalize a port into a number, string, or false.
@@ -81,5 +82,6 @@ function onListening() {
 
 server.listen(port);
 logger.info(`Server has started on ${port}`);
+db.on();
 server.on('error', onError);
 server.on('listening', onListening);
