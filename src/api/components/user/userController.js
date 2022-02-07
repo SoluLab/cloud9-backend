@@ -3,7 +3,7 @@ import {
 	getUser,
 	updateUser,
 	login,
-	getBalance,
+	loggedIn,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -30,7 +30,7 @@ export const signUp = async (req, res) => {
 
 export const getUserProfile = async (req, res) => {
 	try {
-		const data = await getUser(req.params.id);
+		const data = await getUser(res.locals.user._id);
 		if (!data)
 			return handleError({
 				res,
@@ -50,7 +50,7 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
 	try {
-		const data = await updateUser(req.params.id, req.body);
+		const data = await updateUser(res.locals.user._id, req.body);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -92,22 +92,51 @@ export const userLogin = async (req, res) => {
 	}
 };
 
-export const getWalletBalance = async (req, res) => {
+export const userLogout = async (req, res) => {
 	try {
-		const data = await getBalance(req.params.id);
-		if (data.err_msg)
-			return handleError({
-				res,
-				statusCode: 401,
-				err_msg: data.err_msg,
-			});
+		res.cookie('jwt', 'loggedout', {
+			expires: new Date(Date.now() + 10 * 1000),
+			httpOnly: true,
+		});
 		return handleResponse({
 			res,
 			statusCode: 200,
-			msg: 'User Wallet Balance',
-			data,
+			msg: 'Logged out successfully',
 		});
 	} catch (err) {
 		logger.info(err.message);
+	}
+};
+
+export const isLoggedIn = async (req, res, next) => {
+	try {
+		let user = {};
+		if (process.env.NODE_ENV === 'development') {
+			if (req.headers.authorization)
+				user = await loggedIn(req.headers.authorization.split(' ')[1]);
+			if (!req.headers.authorization) user.err_msg = 'Please login';
+		}
+		if (process.env.NODE_ENV === 'production') {
+			if (req.cookies.jwt) user = await loggedIn(req.cookies.jwt);
+			if (!req.cookies.jwt) user.err_msg = 'Please login';
+		}
+
+		if (user.err_msg)
+			return handleError({
+				res,
+				statusCode: 401,
+				err_msg: user.err_msg,
+			});
+
+		res.locals.user = user;
+		next();
+	} catch (err) {
+		logger.info(err.message);
+		return handleError({
+			res,
+			statusCode: 400,
+			err,
+			err_msg: 'Something went wrong please login again',
+		});
 	}
 };
