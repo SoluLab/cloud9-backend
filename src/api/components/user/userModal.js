@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import db from '../../connections/dbConnection.js';
 
 const userSchema = new mongoose.Schema(
 	{
@@ -24,6 +25,6 @@ const userSchema = new mongoose.Schema(
 	}
 );
 
-const User = mongoose.model('User', userSchema);
+const user = db.model('User', userSchema);
 
-export default User;
+export default user;
