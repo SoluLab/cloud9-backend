@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 
-import User from './userModal.js';
+import User from './userModel.js';
 
 const hashPassword = async (password) => {
 	password = await bcrypt.hash(password, 12);
