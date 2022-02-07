@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { promisify } from 'util';
 
 import User from './userModal.js';
 
@@ -19,6 +20,7 @@ export const createUser = async (data) => {
 		email,
 		password,
 	});
+	if (!newUser) return { err_msg: 'Something went wrong please try again' };
 	return newUser;
 };
 
@@ -33,12 +35,15 @@ export const updateUser = async (id, body) => {
 		if (!(await bcrypt.compare(body.oldPassword, user.password)))
 			return { err_msg: 'oldPassword is not correct' };
 		body.password = await hashPassword(body.newPassword);
-		delete body.oldPassword;
+		body.passwordChangedAt = Date.now();
 		delete body.newPassword;
+		delete body.oldPassword;
 	}
-	if (body.oldPassword) delete body.oldPassword;
+	if (body.oldPassword)
+		return { err_msg: 'Please provide newPassword to update password' };
 
 	const data = await User.findByIdAndUpdate(id, body);
+	if (!data) return { err_msg: 'Something went wrong please try again' };
 	return data;
 };
 
@@ -66,9 +71,25 @@ export const login = async (body) => {
 	return { token, cookieOptions, user };
 };
 
-export const getBalance = async (id) => {
-	const user = await User.findById(id).populate('wallet');
-	if (!user) return { err_msg: `User doesn't exist` };
-	if (!user.wallet.balance) return { err_msg: 'Wallet not activated' };
-	return { email: user.email, balance: user.wallet.balance };
+export const loggedIn = async (token) => {
+	// verify token
+	const verifiedToken = await promisify(jwt.verify)(
+		token,
+		process.env.JWT_SECRET
+	);
+
+	// Check if user exists
+	const user = await User.findById(verifiedToken.id);
+	if (!user) {
+		return { err_msg: `User doesn't exists` };
+	}
+
+	// Check if user changed password after the jwt_token was issued
+	if (
+		user.passwordChangedAt &&
+		verifiedToken.iat < parseInt(user.passwordChangedAt.getTime() / 1000, 10)
+	)
+		return { err_msg: 'Password changed please login again' };
+
+	return user;
 };
