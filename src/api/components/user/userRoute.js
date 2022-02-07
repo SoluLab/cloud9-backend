@@ -3,8 +3,9 @@ import {
 	signUp,
 	getUserProfile,
 	updateUserProfile,
-	getWalletBalance,
 	userLogin,
+	isLoggedIn,
+	userLogout,
 } from './userController.js';
 import {
 	validateSignup,
@@ -14,9 +15,14 @@ import {
 const router = express.Router();
 
 router.post('/signup', validateSignup, signUp);
-router.get('/userProfile/:id', getUserProfile);
+router.get('/profile', isLoggedIn, getUserProfile);
 router.post('/login', userLogin);
-router.post('/updateProfile/:id', validateUpdateUserProfile, updateUserProfile);
-router.get('/walletBalance/:id', getWalletBalance);
+router.post(
+	'/updateProfile',
+	isLoggedIn,
+	validateUpdateUserProfile,
+	updateUserProfile
+);
+router.get('/logout', isLoggedIn, userLogout);
 
 export default router;
