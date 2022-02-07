@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			select: false,
 		},
+		passwordChangedAt: Date,
 		wallet: String,
 	},
 
