@@ -1,29 +1,28 @@
 import mongoose from 'mongoose';
 import db from '../../connections/dbConnection.js';
 
-const userSchema = new mongoose.Schema(
-	{
-		email: {
-			type: String,
-			unique: true,
-			required: true,
-		},
-		firstName: String,
-		lastName: String,
-		userName: String,
-		password: {
-			type: String,
-			required: true,
-			select: false,
-		},
-		passwordChangedAt: Date,
-		wallet: String,
+const userSchema = new mongoose.Schema({
+	email: {
+		type: String,
+		unique: true,
+		required: true,
 	},
-
-	{
-		timestamps: true,
-	}
-);
+	firstName: String,
+	lastName: String,
+	userName: String,
+	password: {
+		type: String,
+		required: true,
+		select: false,
+	},
+	passwordChangedAt: Date,
+	wallet: String,
+	createdAt: {
+		type: Date,
+		default: Date.now,
+	},
+	updatedAt: { type: Date },
+});
 
 const user = db.model('User', userSchema);
 
