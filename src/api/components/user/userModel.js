@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
 		select: false,
 	},
 	passwordChangedAt: Date,
-	wallet: String,
+	walletAddress: String,
 	createdAt: {
 		type: Date,
 		default: Date.now,

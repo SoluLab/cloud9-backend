@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
+import Stripe from 'stripe';
 
 import User from './userModel.js';
 
@@ -57,9 +58,13 @@ export const login = async (body) => {
 		return { err_msg: 'email or password is not correct' };
 
 	delete user.password;
-	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-		expiresIn: process.env.JWT_EXPIRES_IN,
-	});
+	const token = jwt.sign(
+		{ id: user._id, email: user.email },
+		process.env.JWT_SECRET,
+		{
+			expiresIn: process.env.JWT_EXPIRES_IN,
+		}
+	);
 
 	const cookieOptions = {
 		expires: new Date(
@@ -92,4 +97,46 @@ export const loggedIn = async (token) => {
 		return { err_msg: 'Password changed please login again' };
 
 	return user;
+};
+
+export const saveWalletAddress = async (email, body) => {
+	const { walletAddress } = body;
+	if (!walletAddress)
+		return {
+			err_msg: 'Please include walletAddress to save',
+			statusCode: 401,
+		};
+	const data = await User.findOneAndUpdate({ email }, { walletAddress });
+	if (!data)
+		return {
+			err_msg: 'Something went wrong please try again',
+			statusCode: 400,
+		};
+	return data;
+};
+
+export const checkout = async (data) => {
+	const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
+	// Add card by creating paymentMethod
+	const { number, exp_month, exp_year, cvc } = data;
+	const { id } = await stripe.paymentMethods.create({
+		type: 'card',
+		card: {
+			number,
+			exp_month,
+			exp_year,
+			cvc,
+		},
+	});
+
+	// Create PaymentIntent
+	const { client_secret } = await stripe.paymentIntents.create({
+		amount: 2000,
+		currency: 'usd',
+		payment_method: id,
+		description: 'Cloud9',
+	});
+
+	return client_secret;
 };
