@@ -4,6 +4,8 @@ import {
 	updateUser,
 	login,
 	loggedIn,
+	saveWalletAddress,
+	checkout,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -137,6 +139,45 @@ export const isLoggedIn = async (req, res, next) => {
 			statusCode: 400,
 			err,
 			err_msg: 'Something went wrong please login again',
+		});
+	}
+};
+
+export const storeWalletAddress = async (req, res) => {
+	try {
+		const data = await saveWalletAddress(res.locals.user.email, req.body);
+		if (data.err_msg)
+			return handleError({
+				res,
+				statusCode: data.statusCode,
+				err_msg: data.err_msg,
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'walletAddress saved successfully',
+		});
+	} catch (err) {
+		logger.info(err.message);
+	}
+};
+
+export const getCheckout = async (req, res) => {
+	try {
+		const data = await checkout(req.body);
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'checkout done successfully',
+			data,
+		});
+	} catch (err) {
+		logger.info(err.message);
+		return handleError({
+			res,
+			statusCode: 400,
+			err,
+			err_msg: 'Stripe error',
 		});
 	}
 };
