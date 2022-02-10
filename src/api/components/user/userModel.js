@@ -17,6 +17,23 @@ const userSchema = new mongoose.Schema({
 	},
 	passwordChangedAt: Date,
 	walletAddress: String,
+	transactions: [
+		{
+			_id: {
+				type: mongoose.Schema.Types.ObjectId,
+				default: mongoose.Types.ObjectId(),
+			},
+			createdAt: {
+				type: Date,
+				default: Date.now(),
+			},
+			transactionType: String,
+			amount: Number,
+			currency: String,
+			tokens: Number,
+			details: String,
+		},
+	],
 	createdAt: {
 		type: Date,
 		default: Date.now,
