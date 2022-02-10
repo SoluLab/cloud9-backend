@@ -9,6 +9,7 @@ import {
 	storeWalletAddress,
 	getCheckout,
 	getTransactions,
+	getLoginHistory,
 } from './userController.js';
 import {
 	validateSignup,
@@ -30,5 +31,6 @@ router.get('/logout', isLoggedIn, userLogout);
 router.post('/storeWalletAddress', isLoggedIn, storeWalletAddress);
 router.post('/checkout', isLoggedIn, getCheckout);
 router.get('/transactions', isLoggedIn, getTransactions);
+router.get('/loginHistory', isLoggedIn, getLoginHistory);
 
 export default router;
