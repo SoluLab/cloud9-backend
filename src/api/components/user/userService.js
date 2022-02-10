@@ -49,15 +49,25 @@ export const updateUser = async (id, body) => {
 };
 
 export const login = async (body) => {
+	const loginData = {
+		browser: 'chrome',
+		ip: '127.0.0.1',
+		region: 'ind',
+	};
 	const { email, password } = body;
-	const user = await User.findOne({ email }).select('+password');
+	let user = await User.findOne({ email }, 'loginHistory email').select(
+		'+password'
+	);
 	if (!user)
 		return { err_msg: `User doesn't exist with this email please signUp` };
 
-	if (!(await bcrypt.compare(password, user.password)))
+	if (!(await bcrypt.compare(password, user.password))) {
+		loginData.status = 'fail';
+		user.loginHistory.unshift(loginData);
+		user.save();
 		return { err_msg: 'email or password is not correct' };
+	}
 
-	delete user.password;
 	const token = jwt.sign(
 		{ id: user._id, email: user.email },
 		process.env.JWT_SECRET,
@@ -73,6 +83,10 @@ export const login = async (body) => {
 		httpOnly: true,
 	};
 	if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+	loginData.status = 'success';
+	user.loginHistory.unshift(loginData);
+	user.save();
+	user = { email: user.email, _id: user._id };
 	return { token, cookieOptions, user };
 };
 
@@ -146,4 +160,16 @@ export const transactions = async (id) => {
 	if (!user) return;
 	if (!user.transactions) return { transactions: [] };
 	return { transactions: user.transactions };
+};
+
+export const loginHistory = async (id) => {
+	const user = await User.findById(id, 'loginHistory').lean();
+	if (!user) return;
+	if (!user.loginHistory) return { loginHistory: [] };
+	user.loginHistory.forEach((el) => {
+		const date = new Date(el.date);
+		el.date = date.toDateString();
+		el.time = date.toTimeString();
+	});
+	return { loginHistory: user.loginHistory };
 };
