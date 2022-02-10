@@ -7,6 +7,7 @@ import {
 	saveWalletAddress,
 	checkout,
 	transactions,
+	loginHistory,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -197,6 +198,27 @@ export const getTransactions = async (req, res) => {
 			res,
 			statusCode: 200,
 			msg: 'Transactions fetched successfully',
+			data,
+		});
+	} catch (err) {
+		logger.info(err.messsage);
+	}
+};
+
+export const getLoginHistory = async (req, res) => {
+	try {
+		const data = await loginHistory(res.locals.user._id);
+		if (!data)
+			return handleError({
+				res,
+				statusCode: 400,
+				err,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Login history fetched successfully',
 			data,
 		});
 	} catch (err) {
