@@ -140,3 +140,10 @@ export const checkout = async (data) => {
 
 	return client_secret;
 };
+
+export const transactions = async (id) => {
+	const user = await User.findById(id, 'transactions');
+	if (!user) return;
+	if (!user.transactions) return { transactions: [] };
+	return { transactions: user.transactions };
+};
