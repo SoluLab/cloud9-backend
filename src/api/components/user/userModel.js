@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
 				type: mongoose.Schema.Types.ObjectId,
 				default: mongoose.Types.ObjectId(),
 			},
-			createdAt: {
+			date: {
 				type: Date,
 				default: Date.now(),
 			},
@@ -32,6 +32,22 @@ const userSchema = new mongoose.Schema({
 			currency: String,
 			tokens: Number,
 			details: String,
+		},
+	],
+	loginHistory: [
+		{
+			_id: {
+				type: mongoose.Schema.Types.ObjectId,
+				default: mongoose.Types.ObjectId(),
+			},
+			date: {
+				type: Date,
+				default: Date.now(),
+			},
+			browser: String,
+			ip: String,
+			region: String,
+			status: String,
 		},
 	],
 	createdAt: {
