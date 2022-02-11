@@ -8,6 +8,7 @@ import {
 	checkout,
 	transactions,
 	loginHistory,
+	receipt,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -219,6 +220,27 @@ export const getLoginHistory = async (req, res) => {
 			res,
 			statusCode: 200,
 			msg: 'Login history fetched successfully',
+			data,
+		});
+	} catch (err) {
+		logger.info(err.messsage);
+	}
+};
+
+export const getReceipt = async (req, res) => {
+	try {
+		const data = await receipt(res.locals.user._id, req.body);
+		if (!data)
+			return handleError({
+				res,
+				statusCode: 400,
+				err,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Transaction done successfully',
 			data,
 		});
 	} catch (err) {
