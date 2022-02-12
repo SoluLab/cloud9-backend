@@ -31,7 +31,8 @@ const options = {
 };
 
 // instantiate a new Winston Logger with the settings defined above
-const logger = new winston.CreateLogger({
+// eslint-disable-next-line new-cap
+const logger = new winston.createLogger({
 	format: winston.format.combine(
 		winston.format.timestamp(),
 		winston.format.json(),
