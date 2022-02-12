@@ -31,7 +31,7 @@ const options = {
 };
 
 // instantiate a new Winston Logger with the settings defined above
-const logger = new winston.createLogger({
+const logger = new winston.CreateLogger({
 	format: winston.format.combine(
 		winston.format.timestamp(),
 		winston.format.json(),
