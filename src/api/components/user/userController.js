@@ -15,6 +15,7 @@ import logger from '../../config/logger.js';
 
 export const signUp = async (req, res) => {
 	try {
+		logger.info('Inside signUp Controller');
 		const data = await createUser(req.body);
 		if (data.err_msg)
 			return handleError({
@@ -29,12 +30,13 @@ export const signUp = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 	}
 };
 
 export const getUserProfile = async (req, res) => {
 	try {
+		logger.info('Inside getUserProfile Controller');
 		const data = await getUser(res.locals.user._id);
 		if (!data)
 			return handleError({
@@ -49,12 +51,13 @@ export const getUserProfile = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 	}
 };
 
 export const updateUserProfile = async (req, res) => {
 	try {
+		logger.info('Inside updateUserProfile Controller');
 		const data = await updateUser(res.locals.user._id, req.body);
 		if (data.err_msg)
 			return handleError({
@@ -69,12 +72,13 @@ export const updateUserProfile = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 	}
 };
 
 export const userLogin = async (req, res) => {
 	try {
+		logger.info('Inside userLogin Controller');
 		const data = await login(req.body);
 		if (data.err_msg)
 			return handleError({
@@ -93,12 +97,13 @@ export const userLogin = async (req, res) => {
 			data: { user, token },
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 	}
 };
 
 export const userLogout = async (req, res) => {
 	try {
+		logger.info('Inside userLogout Controller');
 		res.cookie('jwt', 'loggedout', {
 			expires: new Date(Date.now() + 10 * 1000),
 			httpOnly: true,
@@ -109,12 +114,13 @@ export const userLogout = async (req, res) => {
 			msg: 'Logged out successfully',
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 	}
 };
 
 export const isLoggedIn = async (req, res, next) => {
 	try {
+		logger.info('Inside isLoggedIn Controller');
 		let user = {};
 		if (process.env.NODE_ENV === 'development') {
 			if (req.headers.authorization)
@@ -136,7 +142,7 @@ export const isLoggedIn = async (req, res, next) => {
 		res.locals.user = user;
 		next();
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 		return handleError({
 			res,
 			statusCode: 400,
@@ -148,6 +154,7 @@ export const isLoggedIn = async (req, res, next) => {
 
 export const storeWalletAddress = async (req, res) => {
 	try {
+		logger.info('Inside storeWalletAddress Controller');
 		const data = await saveWalletAddress(res.locals.user.email, req.body);
 		if (data.err_msg)
 			return handleError({
@@ -161,12 +168,13 @@ export const storeWalletAddress = async (req, res) => {
 			msg: 'walletAddress saved successfully',
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 	}
 };
 
 export const getCheckout = async (req, res) => {
 	try {
+		logger.info('Inside getCheckout Controller');
 		const data = await checkout(req.body);
 		return handleResponse({
 			res,
@@ -175,7 +183,7 @@ export const getCheckout = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.message);
+		logger.error(err.message);
 		return handleError({
 			res,
 			statusCode: 400,
@@ -187,6 +195,7 @@ export const getCheckout = async (req, res) => {
 
 export const getTransactions = async (req, res) => {
 	try {
+		logger.info('Inside getTransactions Controller');
 		const data = await transactions(res.locals.user._id);
 		if (!data)
 			return handleError({
@@ -208,6 +217,7 @@ export const getTransactions = async (req, res) => {
 
 export const getLoginHistory = async (req, res) => {
 	try {
+		logger.info('Inside getLoginHistory Controller');
 		const data = await loginHistory(res.locals.user._id);
 		if (!data)
 			return handleError({
@@ -229,6 +239,7 @@ export const getLoginHistory = async (req, res) => {
 
 export const getReceipt = async (req, res) => {
 	try {
+		logger.info('Inside getReceipt Controller');
 		const data = await receipt(res.locals.user._id, req.body);
 		if (!data)
 			return handleError({
