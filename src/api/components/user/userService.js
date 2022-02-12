@@ -3,9 +3,9 @@ import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 import Stripe from 'stripe';
 import Web3 from 'web3';
-import CloudNineICO from '../../../../abi/CloudNineICO.json';
+import CloudNineICO from '../../../../artifacts/contracts/CloudNineICO.sol/CloudNineICO.json';
 import Common from '@ethereumjs/common';
-import { Transaction } from '@ethereumjs/tx';
+import Transaction from '@ethereumjs/tx';
 
 import User from './userModel.js';
 
@@ -15,6 +15,7 @@ const hashPassword = async (password) => {
 };
 
 export const createUser = async (data) => {
+	sender;
 	const { email } = data;
 	let { password } = data;
 	const user = await User.findOne({ email });
@@ -180,6 +181,7 @@ export const loginHistory = async (id) => {
 
 export const receipt = async (sender, recipient, amount, tokenAddress) => {
 	const web3 = new Web3('http://127.0.0.1:7545');
+	// @todo replace sender with contractAddress
 	const contract = new web3.eth.Contract(CloudNineICO.abi, sender);
 	const nonce = await web3.eth.getTransactionCount(sender, 'pending');
 	const block = await web3.eth.getBlock('latest');
@@ -195,9 +197,11 @@ export const receipt = async (sender, recipient, amount, tokenAddress) => {
 		gasLimit: web3.utils.toHex(block.gasLimit),
 		to: tokenAddress,
 		value: '0x00',
-		data: contract.methods
-			.transfer(recipient, web3.utils.toBN(amount * 10 ** decimals))
-			.encodeABI(),
+		// @todo Need to call stripe function here and take the $ amount
+		// data: contract.methods.sendTokens(recipient, )
+		// data: contract.methods
+		// 	.transfer(recipient, web3.utils.toBN(amount * 10 ** decimals))
+		// 	.encodeABI(),
 	};
 
 	const common = new Common({
