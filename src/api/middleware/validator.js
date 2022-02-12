@@ -15,7 +15,7 @@ export const validateSignup = async (req, res, next) => {
 		if (validation.error)
 			return handleError({
 				res,
-				statusCode: 422,
+				statusCode: 201,
 				err_msg: 'validation Error',
 				err: validation.error.message,
 				result: 0,
@@ -45,7 +45,7 @@ export const validateUpdateUserProfile = async (req, res, next) => {
 		if (validation.error)
 			return handleError({
 				res,
-				statusCode: 422,
+				statusCode: 201,
 				err_msg: 'validation Error',
 				err: validation.error.message,
 				result: 0,
