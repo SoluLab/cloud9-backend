@@ -138,6 +138,7 @@ export const checkout = async (data) => {
 	const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 	// Add card by creating paymentMethod
+	// eslint-disable-next-line camelcase
 	const { number, exp_month, exp_year, cvc } = data;
 	const { id } = await stripe.paymentMethods.create({
 		type: 'card',
@@ -150,6 +151,7 @@ export const checkout = async (data) => {
 	});
 
 	// Create PaymentIntent
+	// eslint-disable-next-line camelcase
 	const { client_secret } = await stripe.paymentIntents.create({
 		amount: 2000,
 		currency: 'usd',
@@ -157,6 +159,7 @@ export const checkout = async (data) => {
 		description: 'Cloud9',
 	});
 
+	// eslint-disable-next-line camelcase
 	return client_secret;
 };
 
