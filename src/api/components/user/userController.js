@@ -20,12 +20,12 @@ export const signUp = async (req, res) => {
 		if (data.err_msg)
 			return handleError({
 				res,
-				statusCode: 400,
+				statusCode: data.statusCode,
 				err_msg: data.err_msg,
 			});
 		return handleResponse({
 			res,
-			statusCode: 201,
+			statusCode: 200,
 			msg: 'User signup success',
 			data,
 		});
@@ -41,7 +41,7 @@ export const getUserProfile = async (req, res) => {
 		if (!data)
 			return handleError({
 				res,
-				statusCode: 401,
+				statusCode: 201,
 				err_msg: `User doesn't exist`,
 			});
 		return handleResponse({
@@ -62,7 +62,7 @@ export const updateUserProfile = async (req, res) => {
 		if (data.err_msg)
 			return handleError({
 				res,
-				statusCode: 401,
+				statusCode: data.statusCode,
 				err_msg: data.err_msg,
 			});
 		return handleResponse({
@@ -83,7 +83,7 @@ export const userLogin = async (req, res) => {
 		if (data.err_msg)
 			return handleError({
 				res,
-				statusCode: 401,
+				statusCode: data.statusCode,
 				err_msg: data.err_msg,
 			});
 
@@ -125,17 +125,18 @@ export const isLoggedIn = async (req, res, next) => {
 		if (process.env.NODE_ENV === 'development') {
 			if (req.headers.authorization)
 				user = await loggedIn(req.headers.authorization.split(' ')[1]);
-			if (!req.headers.authorization) user.err_msg = 'Please login';
+			if (!req.headers.authorization)
+				user = { err_msg: 'Please login', statusCode: 401 };
 		}
 		if (process.env.NODE_ENV === 'production') {
 			if (req.cookies.jwt) user = await loggedIn(req.cookies.jwt);
-			if (!req.cookies.jwt) user.err_msg = 'Please login';
+			if (!req.cookies.jwt) user = { err_msg: 'Please login', statusCode: 401 };
 		}
 
 		if (user.err_msg)
 			return handleError({
 				res,
-				statusCode: 401,
+				statusCode: user.statusCode,
 				err_msg: user.err_msg,
 			});
 
@@ -186,7 +187,7 @@ export const getCheckout = async (req, res) => {
 		logger.error(err.message);
 		return handleError({
 			res,
-			statusCode: 400,
+			statusCode: 201,
 			err,
 			err_msg: 'Stripe error',
 		});

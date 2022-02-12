@@ -15,23 +15,26 @@ const hashPassword = async (password) => {
 };
 
 export const createUser = async (data) => {
-	sender;
 	const { email } = data;
 	let { password } = data;
 	const user = await User.findOne({ email });
-	if (user) return { err_msg: 'User already exists' };
+	if (user) return { err_msg: 'User already exists', statusCode: 201 };
 	password = await hashPassword(password);
 
 	const newUser = await User.create({
 		email,
 		password,
 	});
-	if (!newUser) return { err_msg: 'Something went wrong please try again' };
+	if (!newUser)
+		return {
+			err_msg: 'Something went wrong please try again',
+			statusCode: 400,
+		};
 	return newUser;
 };
 
 export const getUser = async (id) => {
-	const user = await User.findById(id, 'email username');
+	const user = await User.findById(id);
 	return user;
 };
 
@@ -46,10 +49,17 @@ export const updateUser = async (id, body) => {
 		delete body.oldPassword;
 	}
 	if (body.oldPassword)
-		return { err_msg: 'Please provide newPassword to update password' };
+		return {
+			err_msg: 'Please provide newPassword to update password',
+			statusCode: 201,
+		};
 
 	const data = await User.findByIdAndUpdate(id, body);
-	if (!data) return { err_msg: 'Something went wrong please try again' };
+	if (!data)
+		return {
+			err_msg: 'Something went wrong please try again',
+			statusCode: 400,
+		};
 	return data;
 };
 
@@ -64,13 +74,16 @@ export const login = async (body) => {
 		'+password'
 	);
 	if (!user)
-		return { err_msg: `User doesn't exist with this email please signUp` };
+		return {
+			err_msg: `User doesn't exist with this email please signUp`,
+			statusCode: 401,
+		};
 
 	if (!(await bcrypt.compare(password, user.password))) {
 		loginData.status = 'fail';
 		user.loginHistory.unshift(loginData);
 		user.save();
-		return { err_msg: 'email or password is not correct' };
+		return { err_msg: 'email or password is not correct', statusCode: 401 };
 	}
 
 	const token = jwt.sign(
@@ -105,7 +118,7 @@ export const loggedIn = async (token) => {
 	// Check if user exists
 	const user = await User.findById(verifiedToken.id);
 	if (!user) {
-		return { err_msg: `User doesn't exists` };
+		return { err_msg: `User doesn't exists`, statusCode: 201 };
 	}
 
 	// Check if user changed password after the jwt_token was issued
@@ -113,7 +126,7 @@ export const loggedIn = async (token) => {
 		user.passwordChangedAt &&
 		verifiedToken.iat < parseInt(user.passwordChangedAt.getTime() / 1000, 10)
 	)
-		return { err_msg: 'Password changed please login again' };
+		return { err_msg: 'Password changed please login again', statusCode: 401 };
 
 	return user;
 };
@@ -123,7 +136,7 @@ export const saveWalletAddress = async (email, body) => {
 	if (!walletAddress)
 		return {
 			err_msg: 'Please include walletAddress to save',
-			statusCode: 401,
+			statusCode: 201,
 		};
 	const data = await User.findOneAndUpdate({ email }, { walletAddress });
 	if (!data)
