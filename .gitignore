@@ -9,3 +9,4 @@ dist
 artifacts/
 cache/
 abi
+firebaseAdminSDK.json
