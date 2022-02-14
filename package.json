@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Cloud9 ICO Backend with eosio.js sdk integration",
   "private": true,
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node --experimental-json-modules ./src/api/bin/www",
@@ -26,7 +27,7 @@
   "homepage": "https://github.com/SoluLab/cloud9-backend#readme",
   "dependencies": {
     "@ethereumjs/common": "^2.6.2",
-    "@ethereumjs/tx": "^3.5.0",
+    "@ethereumjs/tx": "^3.3.0",
     "@openzeppelin/contracts": "v2.5",
     "@poanet/solidity-flattener": "^3.0.6",
     "app-root-path": "^3.0.0",

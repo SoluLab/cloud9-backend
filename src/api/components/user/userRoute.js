@@ -10,6 +10,7 @@ import {
 	getCheckout,
 	getTransactions,
 	getLoginHistory,
+	sendTokensToUserController,
 } from './userController.js';
 import {
 	validateSignup,
@@ -32,5 +33,6 @@ router.post('/storeWalletAddress', isLoggedIn, storeWalletAddress);
 router.post('/checkout', isLoggedIn, getCheckout);
 router.get('/transactions', isLoggedIn, getTransactions);
 router.get('/loginHistory', isLoggedIn, getLoginHistory);
+router.post('/sendTokensToUser', sendTokensToUserController);
 
 export default router;

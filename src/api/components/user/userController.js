@@ -8,7 +8,7 @@ import {
 	checkout,
 	transactions,
 	loginHistory,
-	receipt,
+	sendTokensToUser,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -238,10 +238,10 @@ export const getLoginHistory = async (req, res) => {
 	}
 };
 
-export const getReceipt = async (req, res) => {
+export const sendTokensToUserController = async (req, res) => {
 	try {
 		logger.info('Inside getReceipt Controller');
-		const data = await receipt(res.locals.user._id, req.body);
+		const data = await sendTokensToUser(req.body.recipient, req.body.amount);
 		if (!data)
 			return handleError({
 				res,
@@ -257,5 +257,6 @@ export const getReceipt = async (req, res) => {
 		});
 	} catch (err) {
 		logger.info(err.messsage);
+		handleError({ res, err });
 	}
 };

@@ -4,10 +4,16 @@ import { promisify } from 'util';
 import Stripe from 'stripe';
 import Web3 from 'web3';
 import CloudNineICO from '../../../../artifacts/contracts/CloudNineICO.sol/CloudNineICO.json';
-import Common from '@ethereumjs/common';
-import Transaction from '@ethereumjs/tx';
-
+import Common, { CustomChain } from '@ethereumjs/common';
+import Tx from '@ethereumjs/tx';
 import User from './userModel.js';
+import axios from 'axios';
+
+const web3 = new Web3(new Web3.providers.HttpProvider(process.env.ALCHEMY_URL));
+const contract = new web3.eth.Contract(
+	CloudNineICO.abi,
+	'0x406e5FF58036eeE55E9c11a9927943130350d3Ac'
+);
 
 const hashPassword = async (password) => {
 	password = await bcrypt.hash(password, 12);
@@ -195,41 +201,49 @@ export const loginHistory = async (id) => {
 	return { loginHistory: user.loginHistory };
 };
 
-export const receipt = async (sender, recipient, amount, tokenAddress) => {
-	const web3 = new Web3('http://127.0.0.1:7545');
-	// @todo replace sender with contractAddress
-	const contract = new web3.eth.Contract(CloudNineICO.abi, sender);
-	const nonce = await web3.eth.getTransactionCount(sender, 'pending');
-	const block = await web3.eth.getBlock('latest');
-	const gasPriceEstimate = await fetch(
-		'https://gasstation-mainnet.matic.network/'
-	);
-	const txData = {
-		nonce: web3.utils.toHex(nonce),
-		from: sender,
-		gasPrice: web3.utils.toHex(
-			web3.utils.toWei(`${gasPriceEstimate.fast}`, 'Gwei')
-		),
-		gasLimit: web3.utils.toHex(block.gasLimit),
-		to: tokenAddress,
-		value: '0x00',
-		// @todo Need to call stripe function here and take the $ amount
-		// data: contract.methods.sendTokens(recipient, )
-		// data: contract.methods
-		// 	.transfer(recipient, web3.utils.toBN(amount * 10 ** decimals))
-		// 	.encodeABI(),
-	};
+export const sendTokensToUser = async (recipient, amount) => {
+	try {
+		console.log('Inside sendTokenToUser Service');
+		const nonce = await web3.eth.getTransactionCount(
+			'0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C',
+			'pending'
+		);
+		const gasPriceEstimate = await axios.get(
+			'https://gasstation-mainnet.matic.network/'
+		);
+		const txData = {
+			nonce: web3.utils.toHex(nonce),
+			gasPrice: web3.utils.toHex(
+				web3.utils.toWei(`${gasPriceEstimate.data.fast}`, 'Gwei')
+			),
+			gasLimit: web3.utils.toHex('3000000'),
+			from: '0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C',
+			to: '0x406e5ff58036eee55e9c11a9927943130350d3ac',
+			value: '0x00',
+			data: contract.methods
+				.sendTokens(recipient, web3.utils.toBN(amount))
+				.encodeABI(),
+		};
 
-	const common = new Common({
-		chain: Chain.Mainnet,
-	});
-	const tx = Transaction.fromTxData(txData, { common });
-	const privateKey = Buffer.from(
-		'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109',
-		'hex'
-	);
-	const signedTx = tx.sign(privateKey);
-	const serializedTx = signedTx.serialize().toString('hex');
-	const receipt = await web3.eth.sendSignedTransaction(`0x${serializedTx}`);
-	return receipt;
+		const common = Common.default.custom({
+			name: 'matic',
+			networkId: 80001,
+			chainId: 80001,
+		});
+
+		const tx = Tx.Transaction.fromTxData(txData, { common });
+		const privateKey = Buffer.from(
+			'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109',
+			'hex'
+		);
+		const signedTx = tx.sign(privateKey);
+		const serializedTx = signedTx.serialize();
+
+		const receipt = await web3.eth.sendSignedTransaction(
+			`0x${serializedTx.toString('hex')}`
+		);
+		return receipt;
+	} catch (error) {
+		throw error;
+	}
 };
