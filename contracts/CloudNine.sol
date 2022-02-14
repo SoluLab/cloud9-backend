@@ -513,7 +513,7 @@ pragma solidity ^0.8.2;
 
 contract CloudNine is ERC20 {
     constructor() ERC20("CloudNine", "C9") {
-        _mint(msg.sender, 100000 * 10**decimals());
+        _mint(msg.sender, 10000000000 * 10**decimals());
     }
 }
 

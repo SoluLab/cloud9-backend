@@ -136,6 +136,7 @@ contract CloudNineICO is Crowdsale, Ownable {
         onlyOwner
     {
         uint256 tokensToSend = _getTokenAmount(weiAmount);
+        _processPurchase(recipient, tokensToSend);
         require(
             tokensToSend <= token().balanceOf(address(this)),
             "Amount > Balance."
