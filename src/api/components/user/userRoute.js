@@ -33,6 +33,6 @@ router.post('/storeWalletAddress', isLoggedIn, storeWalletAddress);
 router.post('/checkout', isLoggedIn, getCheckout);
 router.get('/transactions', isLoggedIn, getTransactions);
 router.get('/loginHistory', isLoggedIn, getLoginHistory);
-router.post('/sendTokensToUser', sendTokensToUserController);
+router.post('/sendTokensToUser', isLoggedIn, sendTokensToUserController);
 
 export default router;
