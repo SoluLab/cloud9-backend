@@ -18,4 +18,9 @@ export default {
 			useCreateIndex: true,
 		},
 	},
+	alchemyUrl: process.env.ALCHEMY_URL,
+	contracts: {
+		tokenContract: process.env.CLOUD9_TOKEN_CONTRACT_ADDRESS,
+		icoContract: process.env.CLOUD9_ICO_CONTRACT_ADDRESS,
+	},
 };

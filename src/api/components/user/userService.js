@@ -4,16 +4,14 @@ import { promisify } from 'util';
 import Stripe from 'stripe';
 import Web3 from 'web3';
 import CloudNineICO from '../../../../artifacts/contracts/CloudNineICO.sol/CloudNineICO.json';
-import Common, { CustomChain } from '@ethereumjs/common';
+import Common from '@ethereumjs/common';
 import Tx from '@ethereumjs/tx';
 import User from './userModel.js';
 import axios from 'axios';
+import { alchemyUrl, contracts } from '../../config/config.js';
 
-const web3 = new Web3(new Web3.providers.HttpProvider(process.env.ALCHEMY_URL));
-const contract = new web3.eth.Contract(
-	CloudNineICO.abi,
-	'0x406e5FF58036eeE55E9c11a9927943130350d3Ac'
-);
+const web3 = new Web3(new Web3.providers.HttpProvider(alchemyUrl));
+const contract = new web3.eth.Contract(CloudNineICO.abi, contracts.icoContract);
 
 const hashPassword = async (password) => {
 	password = await bcrypt.hash(password, 12);
