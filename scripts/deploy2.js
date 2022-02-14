@@ -16,12 +16,12 @@ async function main() {
 	// await hre.run('compile');
 
 	// We get the contract to deploy
-	const Cloud9Token = await hre.ethers.getContractFactory('CloudNine');
-	const cloud9Token = await Cloud9Token.deploy();
+	const Cloud9ICO = await hre.ethers.getContractFactory('CloudNineICO');
+	const cloud9ICO = await Cloud9ICO.deploy();
 
-	await cloud9Token.deployed();
+	await cloud9ICO.deployed();
 
-	console.log('Cloud9Token deployed to:', cloud9Token.address);
+	console.log('Cloud9ICO deployed to:', cloud9ICO.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

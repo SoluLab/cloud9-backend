@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Cloud9 ICO Backend with eosio.js sdk integration",
   "private": true,
-  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node --experimental-json-modules ./src/api/bin/www",

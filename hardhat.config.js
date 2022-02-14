@@ -31,12 +31,18 @@ module.exports = {
 			accounts:
 				process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
 		},
+		mumbai: {
+			url: 'https://polygon-mumbai.g.alchemy.com/v2/9wlUi2MKDoF84RDsN4PBFxYyXcHYovsP',
+			accounts: [
+				'0d8e00bff210f964181a269ba3ac6e764db51d81d5dbe72afa266a05eacf77d0',
+			],
+		},
 	},
 	gasReporter: {
 		enabled: process.env.REPORT_GAS !== undefined,
 		currency: 'USD',
 	},
 	etherscan: {
-		apiKey: process.env.ETHERSCAN_API_KEY,
+		apiKey: 'MV3KAER7SK6PBCMW3W2D8ANAD8Z9YNV5KF',
 	},
 };
