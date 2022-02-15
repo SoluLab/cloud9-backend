@@ -16,13 +16,12 @@ export const pushNotifications = async (data) => {
 	});
 
 	const notificationData = {
-		title: 'data.title',
-		body: 'data.body',
+		title: data.title,
+		body: data.body,
 	};
 	const message = {
 		notification: notificationData,
-		token:
-			'BNdLxhDptTOs_89f--Zmry_6K2eTvqIo9rKDHtY20xutAyOi8zye1IFtmmhGa4das9keN-ctxlfWdpF5IkVzm00',
+		token: res.locals.user.firebaseToken,
 	};
 
 	const result = await getMessaging().send(message);
