@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { getAccountPath } from 'ethers/lib/utils';
 
 dotenv.config();
 export default {
