@@ -289,7 +289,48 @@ export const getWalletBalance = async (walletAddress, tokenAddress) => {
 			userBalance: userBalance / 10 ** decimals,
 		};
 	} catch (error) {
-		console.log(error);
+		throw error;
+	}
+};
+
+export const getPieChartDetails = async () => {
+	try {
+		logger.info('Inside getPieChartDetails Service');
+		const totalSupply = '100%';
+		const icoPhase1 = '1%';
+		const icoPhase2 = '2.5%';
+		const icoPhase3 = '3%';
+		const icoPhase4 = '4.5%';
+		const icoPhase5 = '5%';
+		const icoPhase6 = '20%';
+		const teamTokens = '3%';
+		const founder = '10%';
+		const avilesFamily = '0%';
+		const influencersBounty = '2%';
+		const lendingProgram = '8%';
+		const legal = '4%';
+		const reserveForDEXCEX = '15%';
+		const stakingReward = '15%';
+		const reserves = '7%';
+
+		return {
+			'ICO Round 1': icoPhase1,
+			'ICO Round 2': icoPhase2,
+			'ICO Round 3': icoPhase3,
+			'ICO Round 4': icoPhase4,
+			'ICO Round 5': icoPhase5,
+			'ICO Round 6': icoPhase6,
+			'Team Tokens': teamTokens,
+			Founders: founder,
+			'Aviles Familiy': avilesFamily,
+			'Influencers/Bounty': influencersBounty,
+			'Lending Program': lendingProgram,
+			'~Misc/Legal': legal,
+			'Reserve for DEX & CEX Liquidity': reserveForDEXCEX,
+			'Staking Rewards': stakingReward,
+			Reserves: reserves,
+		};
+	} catch (error) {
 		throw error;
 	}
 };
