@@ -3,7 +3,7 @@ import { getMessaging } from 'firebase-admin/messaging';
 import admin from 'firebase-admin';
 
 import firebaseConfig from '../../../../firebaseAdminSDK.json';
-import Notification from './notificationModal.js';
+import Notification from './notificationModel.js';
 
 export const getnotifications = async (id) => {
 	const data = await Notification.find({ userId: id });

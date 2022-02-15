@@ -213,6 +213,9 @@ export const loginHistory = async (id) => {
 
 export const sendTokensToUser = async (recipient, amount) => {
 	try {
+		// recipient - walletaddress
+		// amount - 5/2 * 10^18
+		// 0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C - contract deployment address
 		console.log('Inside sendTokenToUser Service');
 		const nonce = await web3.eth.getTransactionCount(
 			'0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C',
@@ -228,7 +231,7 @@ export const sendTokensToUser = async (recipient, amount) => {
 			),
 			gasLimit: web3.utils.toHex('3000000'),
 			from: '0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C',
-			to: '0x406e5ff58036eee55e9c11a9927943130350d3ac',
+			to: '0x406e5ff58036eee55e9c11a9927943130350d3ac', // ico contract address
 			value: '0x00',
 			data: contract.methods
 				.sendTokens(recipient, web3.utils.toBN(amount))
@@ -243,7 +246,7 @@ export const sendTokensToUser = async (recipient, amount) => {
 
 		const tx = Tx.Transaction.fromTxData(txData, { common });
 		const privateKey = Buffer.from(
-			'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109',
+			'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109', // 74c private key
 			'hex'
 		);
 		const signedTx = tx.sign(privateKey);

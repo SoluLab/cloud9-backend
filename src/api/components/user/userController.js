@@ -14,8 +14,8 @@ import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
 
 export const signUp = async (req, res) => {
+	logger.info('Inside signUp Controller');
 	try {
-		logger.info('Inside signUp Controller');
 		const data = await createUser(req.body);
 		if (data.err_msg)
 			return handleError({
@@ -35,8 +35,8 @@ export const signUp = async (req, res) => {
 };
 
 export const getUserProfile = async (req, res) => {
+	logger.info('Inside getUserProfile Controller');
 	try {
-		logger.info('Inside getUserProfile Controller');
 		const data = await getUser(res.locals.user._id);
 		if (!data)
 			return handleError({
@@ -56,8 +56,8 @@ export const getUserProfile = async (req, res) => {
 };
 
 export const updateUserProfile = async (req, res) => {
+	logger.info('Inside updateUserProfile Controller');
 	try {
-		logger.info('Inside updateUserProfile Controller');
 		const data = await updateUser(res.locals.user._id, req.body);
 		if (data.err_msg)
 			return handleError({
@@ -77,6 +77,7 @@ export const updateUserProfile = async (req, res) => {
 };
 
 export const userLogin = async (req, res) => {
+	logger.info('Inside userLogin Controller');
 	try {
 		logger.info('Inside userLogin Controller');
 		const data = await login(req.body, req.ip);
