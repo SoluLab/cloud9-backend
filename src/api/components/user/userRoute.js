@@ -12,6 +12,7 @@ import {
 	getLoginHistory,
 	sendTokensToUserController,
 	getWalletBalanceController,
+	getPieChartDetailsController,
 } from './userController.js';
 import {
 	validateSignup,
@@ -20,6 +21,7 @@ import {
 
 const router = express.Router();
 
+router.get('/getPieChartDetails', getPieChartDetailsController);
 router.post('/signup', validateSignup, signUp);
 router.get('/profile', isLoggedIn, getUserProfile);
 router.post('/login', userLogin);
@@ -40,5 +42,4 @@ router.get(
 	isLoggedIn,
 	getWalletBalanceController
 );
-
 export default router;
