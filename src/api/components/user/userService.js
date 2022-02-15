@@ -196,15 +196,6 @@ export const transactions = async (queryString) => {
 	return { err: transactions.data.result, err_msg: transactions.data.message };
 };
 
-/*
-export const walletBalance = async (id) => {
-	let balance = await web3.eth.getBalance(
-		'0x7a500E03A26926963c6111A02614481B297008D0'
-	);
-	balance = web3.utils.fromWei(balance, 'ether');
-};
- */
-
 export const loginHistory = async (id) => {
 	const user = await User.findById(id, 'loginHistory').lean();
 	if (!user) return;
