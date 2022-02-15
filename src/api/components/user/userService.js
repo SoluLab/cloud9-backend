@@ -9,6 +9,7 @@ import Tx from '@ethereumjs/tx';
 import User from './userModel.js';
 import axios from 'axios';
 import { alchemyUrl, contracts } from '../../config/config.js';
+import geoip from 'geoip-lite';
 
 const web3 = new Web3(new Web3.providers.HttpProvider(alchemyUrl));
 const contract = new web3.eth.Contract(CloudNineICO.abi, contracts.icoContract);
@@ -58,7 +59,7 @@ export const updateUser = async (id, body) => {
 			statusCode: 201,
 		};
 
-	const data = await User.findByIdAndUpdate(id, body);
+	const data = await User.findOneAndUpdate({ _id: id }, body, { new: true });
 	if (!data)
 		return {
 			err_msg: 'Something went wrong please try again',
@@ -67,11 +68,12 @@ export const updateUser = async (id, body) => {
 	return data;
 };
 
-export const login = async (body) => {
+export const login = async (body, clientIp) => {
+	const ip = clientIp.split(':').pop();
+	const location = geoip.lookup(ip);
 	const loginData = {
-		browser: 'chrome',
-		ip: '127.0.0.1',
-		region: 'ind',
+		ip,
+		region: location?.country,
 	};
 	const { email, password } = body;
 	let user = await User.findOne({ email }, 'loginHistory email').select(
@@ -180,12 +182,22 @@ export const checkout = async (data) => {
 	return client_secret;
 };
 
-export const transactions = async (id) => {
-	const user = await User.findById(id, 'transactions');
-	if (!user) return;
-	if (!user.transactions) return { transactions: [] };
-	return { transactions: user.transactions };
+export const transactions = async (address) => {
+	const transactions = await axios.get(
+		`https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHER_SCAN_API_KEY}`
+	);
+	if (transactions) return transactions.data;
+	return;
 };
+
+/*
+export const walletBalance = async (id) => {
+	let balance = await web3.eth.getBalance(
+		'0x7a500E03A26926963c6111A02614481B297008D0'
+	);
+	balance = web3.utils.fromWei(balance, 'ether');
+};
+ */
 
 export const loginHistory = async (id) => {
 	const user = await User.findById(id, 'loginHistory').lean();

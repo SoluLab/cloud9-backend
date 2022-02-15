@@ -34,11 +34,11 @@ export const validateUpdateUserProfile = async (req, res, next) => {
 			newPassword: Joi.string().min(6).max(20).optional(),
 			oldPassword: Joi.when('newPassword', {
 				then: Joi.string().required(),
-				otherwise: Joi.string().optional(),
+				otherwise: Joi.string().allow('').optional(),
 			}),
-			userName: Joi.string().optional(),
-			firstName: Joi.string().optional(),
-			lastName: Joi.string().optional(),
+			userName: Joi.string().allow('').optional(),
+			firstName: Joi.string().allow('').optional(),
+			lastName: Joi.string().allow('').optional(),
 		});
 		const validation = schema.validate(req.body, { abortEarly: false });
 

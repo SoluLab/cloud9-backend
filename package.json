@@ -40,6 +40,7 @@
     "express-rate-limit": "^6.2.0",
     "firebase-admin": "^10.0.2",
     "generate-password": "^1.6.1",
+    "geoip-lite": "^1.4.3",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.14",

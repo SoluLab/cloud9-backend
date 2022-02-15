@@ -79,7 +79,7 @@ export const updateUserProfile = async (req, res) => {
 export const userLogin = async (req, res) => {
 	try {
 		logger.info('Inside userLogin Controller');
-		const data = await login(req.body);
+		const data = await login(req.body, req.ip);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -197,14 +197,7 @@ export const getCheckout = async (req, res) => {
 export const getTransactions = async (req, res) => {
 	try {
 		logger.info('Inside getTransactions Controller');
-		const data = await transactions(res.locals.user._id);
-		if (!data)
-			return handleError({
-				res,
-				statusCode: 400,
-				err,
-				err_msg: 'Something went wrong',
-			});
+		const data = await transactions(req.params.address);
 		return handleResponse({
 			res,
 			statusCode: 200,
@@ -213,6 +206,12 @@ export const getTransactions = async (req, res) => {
 		});
 	} catch (err) {
 		logger.info(err.messsage);
+		return handleError({
+			res,
+			statusCode: 400,
+			err,
+			err_msg: 'Something went wrong',
+		});
 	}
 };
 

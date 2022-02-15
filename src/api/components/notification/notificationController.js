@@ -1,4 +1,4 @@
-import { getnotifications } from './notificationService.js';
+import { getnotifications, pushNotifications } from './notificationService.js';
 import logger from '../../config/logger.js';
 
 export const getUserNotifications = async (req, res) => {
@@ -19,6 +19,17 @@ export const getUserNotifications = async (req, res) => {
 			data,
 		});
 	} catch (err) {
+		logger.info(err.messsage);
+	}
+};
+
+export const pushNotification = async (data) => {
+	try {
+		logger.info('Inside pushNotifications Controller');
+		const result = await pushNotifications(data);
+		return data;
+	} catch (err) {
+		console.log(err);
 		logger.info(err.messsage);
 	}
 };
