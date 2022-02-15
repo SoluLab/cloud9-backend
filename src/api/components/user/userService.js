@@ -60,7 +60,7 @@ export const updateUser = async (id, body) => {
 			statusCode: 201,
 		};
 
-	const data = await User.findByIdAndUpdate(id, body);
+	const data = await User.findOneAndUpdate({ _id: id }, body, { new: true });
 	if (!data)
 		return {
 			err_msg: 'Something went wrong please try again',
