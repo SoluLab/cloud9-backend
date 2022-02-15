@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { getAccountPath } from 'ethers/lib/utils';
 
 dotenv.config();
 export default {
@@ -33,5 +34,15 @@ export default {
 	contractAccounts: {
 		deploymentAddress: process.env.DEPLOYMENT_ADDRESS,
 		deploymentPrivateKey: process.env.DEPLOYMENT_PRIVATE_KEY,
+	},
+	getTransactionAPI: {
+		endpoint: process.env.POLYGON_API_ENDPOINT,
+		module: 'account',
+		action: 'tokentx',
+		startblock: '0',
+		endblock: '99999999',
+		page: '1',
+		offset: '5',
+		sort: 'asc',
 	},
 };

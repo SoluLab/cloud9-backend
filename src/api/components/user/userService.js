@@ -190,7 +190,17 @@ export const checkout = async (data) => {
 export const transactions = async (queryString) => {
 	const { contractAddress, address } = queryString;
 	const transactions = await axios.get(
-		`https://api-testnet.polygonscan.com/api?module=account&action=tokentx&contractaddress=${contractAddress}&address=${address}&startblock=0&endblock=99999999&page=1&offset=5&sort=asc&apikey=${config.etherscanApiKey}`
+		`${config.getTransactionAPI.endpoint}?
+		module=${config.getTransactionAPI.module}&
+		action=${config.getTransactionAPI.action}&
+		contractaddress=${contractAddress}&
+		address=${address}&
+		startblock=${config.getTransactionAPI.startblock}&
+		endblock=${config.getTransactionAPI.endblock}&
+		page=${config.getTransactionAPI.page}&
+		offset=${config.getTransactionAPI.offset}&
+		sort=${config.getTransactionAPI.sort}&
+		apikey=${config.etherscanApiKey}`
 	);
 	if (transactions.data.message === 'OK') return transactions.data;
 	return { err: transactions.data.result, err_msg: transactions.data.message };
