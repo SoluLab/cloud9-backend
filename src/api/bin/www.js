@@ -5,8 +5,9 @@ import http from 'http';
 import { Server } from 'socket.io';
 import app from '../app.js';
 import logger from '../config/logger.js';
+import config from '../config/config.js';
 
-if (process.env.NODE_ENV === 'production') {
+if (config.nodeEnv === 'production') {
 	process.on('uncaughtException', (err) => {
 		logger.info('UNCAUGHT EXCEPTION! 💥 Shutting down...');
 		logger.error(err.name, err.message);
@@ -31,7 +32,7 @@ function normalizePort(val) {
 
 	return false;
 }
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(config.port || '3000');
 
 const server = http.createServer(app);
 app.set('port', port);
