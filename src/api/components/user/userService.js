@@ -43,6 +43,7 @@ export const createUser = async (data) => {
 
 export const getUser = async (id) => {
 	const user = await User.findById(id);
+	if (user.loginHistory.length > 0) user.loginHistory = user.loginHistory[0];
 	return user;
 };
 
@@ -185,12 +186,13 @@ export const checkout = async (data) => {
 	return client_secret;
 };
 
-export const transactions = async (address) => {
+export const transactions = async (queryString) => {
+	const { contractAddress, address } = queryString;
 	const transactions = await axios.get(
-		`https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHER_SCAN_API_KEY}`
+		`https://api-testnet.polygonscan.com/api?module=account&action=tokentx&contractaddress=${contractAddress}&address=${address}&startblock=0&endblock=99999999&page=1&offset=5&sort=asc&apikey=${process.env.ETHER_SCAN_API_KEY}`
 	);
-	if (transactions) return transactions.data;
-	return;
+	if (transactions.data.message === 'OK') return transactions.data;
+	return { err: transactions.data.result, err_msg: transactions.data.message };
 };
 
 /*
