@@ -11,6 +11,7 @@ import {
 	getTransactions,
 	getLoginHistory,
 	sendTokensToUserController,
+	getWalletBalanceController,
 } from './userController.js';
 import {
 	validateSignup,
@@ -34,5 +35,10 @@ router.post('/checkout', isLoggedIn, getCheckout);
 router.get('/transactions', isLoggedIn, getTransactions);
 router.get('/loginHistory', isLoggedIn, getLoginHistory);
 router.post('/sendTokensToUser', isLoggedIn, sendTokensToUserController);
+router.get(
+	'/getWalletBalance/:tokenAddress/:walletAddress',
+	isLoggedIn,
+	getWalletBalanceController
+);
 
 export default router;
