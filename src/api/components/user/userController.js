@@ -10,6 +10,7 @@ import {
 	loginHistory,
 	sendTokensToUser,
 	getWalletBalance,
+	getPieChartDetails,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -278,6 +279,28 @@ export const getWalletBalanceController = async (req, res) => {
 			res,
 			statusCode: 200,
 			msg: 'Wallet Balance',
+			data,
+		});
+	} catch (error) {
+		logger.info(error.messsage);
+		return handleError({ res, error });
+	}
+};
+
+export const getPieChartDetailsController = async (req, res) => {
+	try {
+		const data = await getPieChartDetails();
+		if (!data)
+			return handleError({
+				res,
+				statusCode: 400,
+				err,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Token Sale Details',
 			data,
 		});
 	} catch (error) {
