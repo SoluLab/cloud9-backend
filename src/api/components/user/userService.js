@@ -8,11 +8,14 @@ import Common from '@ethereumjs/common';
 import Tx from '@ethereumjs/tx';
 import User from './userModel.js';
 import axios from 'axios';
-import { alchemyUrl, contracts } from '../../config/config.js';
+import { default as config } from '../../config/config.js';
 import geoip from 'geoip-lite';
 
-const web3 = new Web3(new Web3.providers.HttpProvider(alchemyUrl));
-const contract = new web3.eth.Contract(CloudNineICO.abi, contracts.icoContract);
+const web3 = new Web3(new Web3.providers.HttpProvider(config.alchemyUrl));
+const contract = new web3.eth.Contract(
+	CloudNineICO.abi,
+	config.contracts.icoContract
+);
 
 const hashPassword = async (password) => {
 	password = await bcrypt.hash(password, 12);
