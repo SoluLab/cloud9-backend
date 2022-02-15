@@ -104,19 +104,17 @@ export const login = async (body, clientIp) => {
 
 	const token = jwt.sign(
 		{ id: user._id, email: user.email },
-		process.env.JWT_SECRET,
+		config.jwtSecret,
 		{
-			expiresIn: process.env.JWT_EXPIRES_IN,
+			expiresIn: config.jetExpiresIn,
 		}
 	);
 
 	const cookieOptions = {
-		expires: new Date(
-			Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-		),
+		expires: new Date(Date.now() + config.jetExpiresIn * 24 * 60 * 60 * 1000),
 		httpOnly: true,
 	};
-	if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+	if (config.nodeEnv === 'production') cookieOptions.secure = true;
 	loginData.status = 'success';
 	user.loginHistory.unshift(loginData);
 	user.save();
@@ -126,10 +124,7 @@ export const login = async (body, clientIp) => {
 
 export const loggedIn = async (token) => {
 	// verify token
-	const verifiedToken = await promisify(jwt.verify)(
-		token,
-		process.env.JWT_SECRET
-	);
+	const verifiedToken = await promisify(jwt.verify)(token, config.jwtSecret);
 
 	// Check if user exists
 	const user = await User.findById(verifiedToken.id);
@@ -164,7 +159,7 @@ export const saveWalletAddress = async (email, body) => {
 };
 
 export const checkout = async (data) => {
-	const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+	const stripe = Stripe(config.stripeSecretKey);
 
 	// Add card by creating paymentMethod
 	// eslint-disable-next-line camelcase

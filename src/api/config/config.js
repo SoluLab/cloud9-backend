@@ -4,6 +4,9 @@ dotenv.config();
 export default {
 	nodeEnv: process.env.NODE_ENV,
 	port: process.env.PORT,
+	jwtSecret: process.env.JWT_SECRET,
+	jetExpiresIn: process.env.JWT_EXPIRES_IN,
+	stripeSecretKey: process.env.STRIPE_SECRET_KEY,
 	apiVersionUrl: '/api/v1',
 	db: {
 		str:
