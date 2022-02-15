@@ -14,6 +14,7 @@ import {
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
+import config from '../../config/config.js';
 
 export const signUp = async (req, res) => {
 	logger.info('Inside signUp Controller');
@@ -125,13 +126,13 @@ export const isLoggedIn = async (req, res, next) => {
 	try {
 		logger.info('Inside isLoggedIn Controller');
 		let user = {};
-		if (process.env.NODE_ENV === 'development') {
+		if (config.nodeEnv === 'development') {
 			if (req.headers.authorization)
 				user = await loggedIn(req.headers.authorization.split(' ')[1]);
 			if (!req.headers.authorization)
 				user = { err_msg: 'Please login', statusCode: 401 };
 		}
-		if (process.env.NODE_ENV === 'production') {
+		if (config.nodeEnv === 'production') {
 			if (req.cookies.jwt) user = await loggedIn(req.cookies.jwt);
 			if (!req.cookies.jwt) user = { err_msg: 'Please login', statusCode: 401 };
 		}
