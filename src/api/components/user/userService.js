@@ -4,17 +4,23 @@ import { promisify } from 'util';
 import Stripe from 'stripe';
 import Web3 from 'web3';
 import CloudNineICO from '../../../../artifacts/contracts/CloudNineICO.sol/CloudNineICO.json';
+import CloudNineToken from '../../../../artifacts/contracts/CloudNine.sol/ERC20.json';
 import Common from '@ethereumjs/common';
 import Tx from '@ethereumjs/tx';
 import User from './userModel.js';
 import axios from 'axios';
 import { default as config } from '../../config/config.js';
 import geoip from 'geoip-lite';
+import logger from '../../config/logger.js';
 
 const web3 = new Web3(new Web3.providers.HttpProvider(config.alchemyUrl));
 const contract = new web3.eth.Contract(
 	CloudNineICO.abi,
 	config.contracts.icoContract
+);
+const tokenContract = new web3.eth.Contract(
+	CloudNineToken.abi,
+	config.contracts.tokenContract
 );
 
 const hashPassword = async (password) => {
@@ -189,7 +195,7 @@ export const checkout = async (data) => {
 export const transactions = async (queryString) => {
 	const { contractAddress, address } = queryString;
 	const transactions = await axios.get(
-		`https://api-testnet.polygonscan.com/api?module=account&action=tokentx&contractaddress=${contractAddress}&address=${address}&startblock=0&endblock=99999999&page=1&offset=5&sort=asc&apikey=${process.env.ETHER_SCAN_API_KEY}`
+		`https://api-testnet.polygonscan.com/api?module=account&action=tokentx&contractaddress=${contractAddress}&address=${address}&startblock=0&endblock=99999999&page=1&offset=5&sort=asc&apikey=${config.etherscanApiKey}`
 	);
 	if (transactions.data.message === 'OK') return transactions.data;
 	return { err: transactions.data.result, err_msg: transactions.data.message };
@@ -220,23 +226,20 @@ export const sendTokensToUser = async (recipient, amount) => {
 	try {
 		// recipient - walletaddress
 		// amount - 5/2 * 10^18
-		// 0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C - contract deployment address
 		console.log('Inside sendTokenToUser Service');
 		const nonce = await web3.eth.getTransactionCount(
-			'0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C',
+			`${config.contractAccounts.deploymentAddress}`,
 			'pending'
 		);
-		const gasPriceEstimate = await axios.get(
-			'https://gasstation-mainnet.matic.network/'
-		);
+		const gasPriceEstimate = await axios.get(config.gasPriceEstimateUrl);
 		const txData = {
 			nonce: web3.utils.toHex(nonce),
 			gasPrice: web3.utils.toHex(
 				web3.utils.toWei(`${gasPriceEstimate.data.fast}`, 'Gwei')
 			),
 			gasLimit: web3.utils.toHex('3000000'),
-			from: '0xbe862AD9AbFe6f22BCb087716c7D89a26051f74C',
-			to: '0x406e5ff58036eee55e9c11a9927943130350d3ac', // ico contract address
+			from: `${config.contractAccounts.deploymentAddress}`,
+			to: `${config.contracts.icoContract}`,
 			value: '0x00',
 			data: contract.methods
 				.sendTokens(recipient, web3.utils.toBN(amount))
@@ -251,7 +254,7 @@ export const sendTokensToUser = async (recipient, amount) => {
 
 		const tx = Tx.Transaction.fromTxData(txData, { common });
 		const privateKey = Buffer.from(
-			'e331b6d69882b4cb4ea581d88e0b604039a3de5967688d3dcffdd2270c0fd109', // 74c private key
+			`${config.contractAccounts.deploymentPrivateKey}`,
 			'hex'
 		);
 		const signedTx = tx.sign(privateKey);
@@ -262,6 +265,31 @@ export const sendTokensToUser = async (recipient, amount) => {
 		);
 		return receipt;
 	} catch (error) {
+		throw error;
+	}
+};
+
+export const getWalletBalance = async (walletAddress, tokenAddress) => {
+	try {
+		logger.info('Inside getWalletBalance Service');
+
+		const name = await tokenContract.methods.name().call();
+		const symbol = await tokenContract.methods.symbol().call();
+		const decimals = await tokenContract.methods.decimals().call();
+		const totalSupply = await tokenContract.methods.totalSupply().call();
+		const userBalance = await tokenContract.methods
+			.balanceOf(walletAddress)
+			.call();
+
+		return {
+			name,
+			symbol,
+			decimals,
+			totalSupply: totalSupply / 10 ** decimals,
+			userBalance: userBalance / 10 ** decimals,
+		};
+	} catch (error) {
+		console.log(error);
 		throw error;
 	}
 };
