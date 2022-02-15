@@ -198,7 +198,14 @@ export const getCheckout = async (req, res) => {
 export const getTransactions = async (req, res) => {
 	try {
 		logger.info('Inside getTransactions Controller');
-		const data = await transactions(req.params.address);
+		const data = await transactions(req.query);
+		if (data.err_msg)
+			return handleError({
+				res,
+				statusCode: 201,
+				err: data.err,
+				err_msg: data.err_msg,
+			});
 		return handleResponse({
 			res,
 			statusCode: 200,
@@ -207,12 +214,6 @@ export const getTransactions = async (req, res) => {
 		});
 	} catch (err) {
 		logger.info(err.messsage);
-		return handleError({
-			res,
-			statusCode: 400,
-			err,
-			err_msg: 'Something went wrong',
-		});
 	}
 };
 
