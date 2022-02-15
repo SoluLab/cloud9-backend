@@ -9,6 +9,7 @@ import {
 	transactions,
 	loginHistory,
 	sendTokensToUser,
+	getWalletBalance,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -258,6 +259,29 @@ export const sendTokensToUserController = async (req, res) => {
 		});
 	} catch (err) {
 		logger.info(err.messsage);
-		handleError({ res, err });
+		return handleError({ res, err });
+	}
+};
+
+export const getWalletBalanceController = async (req, res) => {
+	try {
+		const { walletAddress, tokenAddress } = req.params;
+		const data = await getWalletBalance(walletAddress, tokenAddress);
+		if (!data)
+			return handleError({
+				res,
+				statusCode: 400,
+				err,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Wallet Balance',
+			data,
+		});
+	} catch (error) {
+		logger.info(error.messsage);
+		return handleError({ res, error });
 	}
 };
