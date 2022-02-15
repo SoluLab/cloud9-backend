@@ -31,7 +31,7 @@ router.post(
 router.get('/logout', isLoggedIn, userLogout);
 router.post('/storeWalletAddress', isLoggedIn, storeWalletAddress);
 router.post('/checkout', isLoggedIn, getCheckout);
-router.get('/transactions/:address', isLoggedIn, getTransactions);
+router.get('/transactions', isLoggedIn, getTransactions);
 router.get('/loginHistory', isLoggedIn, getLoginHistory);
 router.post('/sendTokensToUser', isLoggedIn, sendTokensToUserController);
 
