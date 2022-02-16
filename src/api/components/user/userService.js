@@ -29,184 +29,226 @@ const hashPassword = async (password) => {
 };
 
 export const createUser = async (data) => {
-	const { email, name } = data;
-	let { password } = data;
-	const user = await User.findOne({ email });
-	if (user) return { err_msg: 'User already exists', statusCode: 201 };
-	password = await hashPassword(password);
+	try {
+		const { email, name } = data;
+		let { password } = data;
+		const user = await User.findOne({ email });
+		if (user) return { err_msg: 'User already exists', statusCode: 201 };
+		password = await hashPassword(password);
 
-	const newUser = await User.create({
-		email,
-		password,
-		name,
-	});
-	if (!newUser)
-		return {
-			err_msg: 'Something went wrong please try again',
-			statusCode: 400,
-		};
-	return { _id: newUser._id, email: newUser.email, name: newUser.name };
+		const newUser = await User.create({
+			email,
+			password,
+			name,
+		});
+		if (!newUser)
+			return {
+				err_msg: 'Something went wrong please try again',
+				statusCode: 400,
+			};
+		return { _id: newUser._id, email: newUser.email, name: newUser.name };
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const getUser = async (id) => {
-	const user = await User.findById(id);
-	if (user.loginHistory.length > 0) user.loginHistory = user.loginHistory[0];
-	return user;
+	try {
+		const user = await User.findById(id);
+		if (user.loginHistory.length > 0) user.loginHistory = user.loginHistory[0];
+		return user;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const updateUser = async (id, body) => {
-	const user = await User.findOne({ _id: id }).select('+password');
-	if (body.newPassword) {
-		if (!(await bcrypt.compare(body.oldPassword, user.password)))
-			return { err_msg: 'oldPassword is not correct' };
-		body.password = await hashPassword(body.newPassword);
-		body.passwordChangedAt = Date.now();
-		delete body.newPassword;
-		delete body.oldPassword;
-	}
-	if (body.oldPassword)
-		return {
-			err_msg: 'Please provide newPassword to update password',
-			statusCode: 201,
-		};
+	try {
+		const user = await User.findOne({ _id: id }).select('+password');
+		if (body.newPassword) {
+			if (!(await bcrypt.compare(body.oldPassword, user.password)))
+				return { err_msg: 'oldPassword is not correct' };
+			body.password = await hashPassword(body.newPassword);
+			body.passwordChangedAt = Date.now();
+			delete body.newPassword;
+			delete body.oldPassword;
+		}
+		if (body.oldPassword)
+			return {
+				err_msg: 'Please provide newPassword to update password',
+				statusCode: 201,
+			};
 
-	const data = await User.findOneAndUpdate({ _id: id }, body, { new: true });
-	if (!data)
-		return {
-			err_msg: 'Something went wrong please try again',
-			statusCode: 400,
-		};
-	return data;
+		const data = await User.findOneAndUpdate({ _id: id }, body, { new: true });
+		if (!data)
+			return {
+				err_msg: 'Something went wrong please try again',
+				statusCode: 400,
+			};
+		return data;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const login = async (body, clientIp) => {
-	const ip = clientIp.split(':').pop();
-	const location = geoip.lookup(ip);
-	const loginData = {
-		ip,
-		region: location?.country,
-	};
-	const { email, password } = body;
-	let user = await User.findOne({ email }, 'loginHistory email name').select(
-		'+password'
-	);
-	if (!user)
-		return {
-			err_msg: `User doesn't exist with this email please signUp`,
-			statusCode: 401,
+	try {
+		const ip = clientIp.split(':').pop();
+		const location = geoip.lookup(ip);
+		const loginData = {
+			ip,
+			region: location?.country,
 		};
+		const { email, password } = body;
+		let user = await User.findOne({ email }, 'loginHistory email name').select(
+			'+password'
+		);
+		if (!user)
+			return {
+				err_msg: `User doesn't exist with this email please signUp`,
+				statusCode: 401,
+			};
 
-	if (!(await bcrypt.compare(password, user.password))) {
-		loginData.status = 'fail';
+		if (!(await bcrypt.compare(password, user.password))) {
+			loginData.status = 'fail';
+			user.loginHistory.unshift(loginData);
+			user.save();
+			return { err_msg: 'email or password is not correct', statusCode: 401 };
+		}
+
+		const token = jwt.sign(
+			{ id: user._id, email: user.email },
+			config.jwtSecret,
+			{
+				expiresIn: config.jetExpiresIn,
+			}
+		);
+
+		const cookieOptions = {
+			expires: new Date(Date.now() + config.jetExpiresIn * 24 * 60 * 60 * 1000),
+			httpOnly: true,
+		};
+		if (config.nodeEnv === 'production') cookieOptions.secure = true;
+		loginData.status = 'success';
 		user.loginHistory.unshift(loginData);
 		user.save();
-		return { err_msg: 'email or password is not correct', statusCode: 401 };
+		user = { email: user.email, _id: user._id, name: user.name };
+		return { token, cookieOptions, user };
+	} catch (error) {
+		throw error;
 	}
-
-	const token = jwt.sign(
-		{ id: user._id, email: user.email },
-		config.jwtSecret,
-		{
-			expiresIn: config.jetExpiresIn,
-		}
-	);
-
-	const cookieOptions = {
-		expires: new Date(Date.now() + config.jetExpiresIn * 24 * 60 * 60 * 1000),
-		httpOnly: true,
-	};
-	if (config.nodeEnv === 'production') cookieOptions.secure = true;
-	loginData.status = 'success';
-	user.loginHistory.unshift(loginData);
-	user.save();
-	user = { email: user.email, _id: user._id, name: user.name };
-	return { token, cookieOptions, user };
 };
 
 export const loggedIn = async (token) => {
-	// verify token
-	const verifiedToken = await promisify(jwt.verify)(token, config.jwtSecret);
+	try {
+		// verify token
+		const verifiedToken = await promisify(jwt.verify)(token, config.jwtSecret);
 
-	// Check if user exists
-	const user = await User.findById(verifiedToken.id);
-	if (!user) {
-		return { err_msg: `User doesn't exists`, statusCode: 201 };
+		// Check if user exists
+		const user = await User.findById(verifiedToken.id);
+		if (!user) {
+			return { err_msg: `User doesn't exists`, statusCode: 201 };
+		}
+
+		// Check if user changed password after the jwt_token was issued
+		if (
+			user.passwordChangedAt &&
+			verifiedToken.iat < parseInt(user.passwordChangedAt.getTime() / 1000, 10)
+		)
+			return {
+				err_msg: 'Password changed please login again',
+				statusCode: 401,
+			};
+
+		return user;
+	} catch (error) {
+		throw error;
 	}
-
-	// Check if user changed password after the jwt_token was issued
-	if (
-		user.passwordChangedAt &&
-		verifiedToken.iat < parseInt(user.passwordChangedAt.getTime() / 1000, 10)
-	)
-		return { err_msg: 'Password changed please login again', statusCode: 401 };
-
-	return user;
 };
 
 export const saveWalletAddress = async (email, body) => {
-	const { walletAddress } = body;
-	if (!walletAddress)
-		return {
-			err_msg: 'Please include walletAddress to save',
-			statusCode: 201,
-		};
-	const data = await User.findOneAndUpdate({ email }, { walletAddress });
-	if (!data)
-		return {
-			err_msg: 'Something went wrong please try again',
-			statusCode: 400,
-		};
-	return data;
+	try {
+		const { walletAddress } = body;
+		if (!walletAddress)
+			return {
+				err_msg: 'Please include walletAddress to save',
+				statusCode: 201,
+			};
+		const data = await User.findOneAndUpdate({ email }, { walletAddress });
+		if (!data)
+			return {
+				err_msg: 'Something went wrong please try again',
+				statusCode: 400,
+			};
+		return data;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const checkout = async (data) => {
-	const stripe = Stripe(config.stripeSecretKey);
+	try {
+		const stripe = Stripe(config.stripeSecretKey);
 
-	// Add card by creating paymentMethod
-	// eslint-disable-next-line camelcase
-	const { number, exp_month, exp_year, cvc } = data;
-	const { id } = await stripe.paymentMethods.create({
-		type: 'card',
-		card: {
-			number,
-			exp_month,
-			exp_year,
-			cvc,
-		},
-	});
+		// Add card by creating paymentMethod
+		// eslint-disable-next-line camelcase
+		const { number, exp_month, exp_year, cvc } = data;
+		const { id } = await stripe.paymentMethods.create({
+			type: 'card',
+			card: {
+				number,
+				exp_month,
+				exp_year,
+				cvc,
+			},
+		});
 
-	// Create PaymentIntent
-	// eslint-disable-next-line camelcase
-	const { client_secret } = await stripe.paymentIntents.create({
-		amount: 2000,
-		currency: 'usd',
-		payment_method: id,
-		description: 'Cloud9',
-	});
+		// Create PaymentIntent
+		// eslint-disable-next-line camelcase
+		const { client_secret } = await stripe.paymentIntents.create({
+			amount: 2000,
+			currency: 'usd',
+			payment_method: id,
+			description: 'Cloud9',
+		});
 
-	// eslint-disable-next-line camelcase
-	return client_secret;
+		// eslint-disable-next-line camelcase
+		return client_secret;
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const transactions = async (queryString) => {
-	const { contractAddress, address } = queryString;
-	const transactions = await axios.get(
-		`${config.getTransactionAPI.endpoint}?module=${config.getTransactionAPI.module}&action=${config.getTransactionAPI.action}&contractaddress=${contractAddress}&address=${address}&startblock=${config.getTransactionAPI.startblock}&endblock=${config.getTransactionAPI.endblock}&page=${config.getTransactionAPI.page}&offset=${config.getTransactionAPI.offset}&sort=${config.getTransactionAPI.sort}&apikey=${config.etherscanApiKey}`
-	);
-	if (transactions.data.message === 'OK') return transactions.data;
-	return { err: transactions.data.result, err_msg: transactions.data.message };
+	try {
+		const { contractAddress, address } = queryString;
+		const transactions = await axios.get(
+			`${config.getTransactionAPI.endpoint}?module=${config.getTransactionAPI.module}&action=${config.getTransactionAPI.action}&contractaddress=${contractAddress}&address=${address}&startblock=${config.getTransactionAPI.startblock}&endblock=${config.getTransactionAPI.endblock}&page=${config.getTransactionAPI.page}&offset=${config.getTransactionAPI.offset}&sort=${config.getTransactionAPI.sort}&apikey=${config.etherscanApiKey}`
+		);
+		if (transactions.data.message === 'OK') return transactions.data;
+		return {
+			err: transactions.data.result,
+			err_msg: transactions.data.message,
+		};
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const loginHistory = async (id) => {
-	const user = await User.findById(id, 'loginHistory').lean();
-	if (!user) return;
-	if (!user.loginHistory) return { loginHistory: [] };
-	user.loginHistory.forEach((el) => {
-		const date = new Date(el.date);
-		el.date = date.toDateString();
-		el.time = date.toTimeString();
-	});
-	return { loginHistory: user.loginHistory };
+	try {
+		const user = await User.findById(id, 'loginHistory').lean();
+		if (!user) return;
+		if (!user.loginHistory) return { loginHistory: [] };
+		user.loginHistory.forEach((el) => {
+			const date = new Date(el.date);
+			el.date = date.toDateString();
+			el.time = date.toTimeString();
+		});
+		return { loginHistory: user.loginHistory };
+	} catch (error) {
+		throw error;
+	}
 };
 
 export const sendTokensToUser = async (recipient, amount) => {
