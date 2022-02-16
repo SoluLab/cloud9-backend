@@ -1,15 +1,15 @@
 import express from 'express';
 import {
-	signUp,
-	getUserProfile,
-	updateUserProfile,
-	userLogin,
+	signUpController,
+	getUserProfileController,
+	updateUserProfileController,
+	userLoginController,
 	isLoggedIn,
-	userLogout,
-	storeWalletAddress,
-	getCheckout,
-	getTransactions,
-	getLoginHistory,
+	userLogoutController,
+	storeWalletAddressController,
+	getCheckoutController,
+	getTransactionsController,
+	getLoginHistoryController,
 	sendTokensToUserController,
 	getWalletBalanceController,
 	getPieChartDetailsController,
@@ -22,20 +22,20 @@ import {
 const router = express.Router();
 
 router.get('/getPieChartDetails', getPieChartDetailsController);
-router.post('/signup', validateSignup, signUp);
-router.get('/profile', isLoggedIn, getUserProfile);
-router.post('/login', userLogin);
+router.post('/signup', validateSignup, signUpController);
+router.get('/profile', isLoggedIn, getUserProfileController);
+router.post('/login', userLoginController);
 router.post(
 	'/updateProfile',
 	isLoggedIn,
 	validateUpdateUserProfile,
-	updateUserProfile
+	updateUserProfileController
 );
-router.get('/logout', isLoggedIn, userLogout);
-router.post('/storeWalletAddress', isLoggedIn, storeWalletAddress);
-router.post('/checkout', isLoggedIn, getCheckout);
-router.get('/transactions', isLoggedIn, getTransactions);
-router.get('/loginHistory', isLoggedIn, getLoginHistory);
+router.get('/logout', isLoggedIn, userLogoutController);
+router.post('/storeWalletAddress', isLoggedIn, storeWalletAddressController);
+router.post('/checkout', isLoggedIn, getCheckoutController);
+router.get('/transactions', isLoggedIn, getTransactionsController);
+router.get('/loginHistory', isLoggedIn, getLoginHistoryController);
 router.post('/sendTokensToUser', isLoggedIn, sendTokensToUserController);
 router.get(
 	'/getWalletBalance/:tokenAddress/:walletAddress',
