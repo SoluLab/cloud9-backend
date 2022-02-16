@@ -190,17 +190,7 @@ export const checkout = async (data) => {
 export const transactions = async (queryString) => {
 	const { contractAddress, address } = queryString;
 	const transactions = await axios.get(
-		`${config.getTransactionAPI.endpoint}?
-		module=${config.getTransactionAPI.module}&
-		action=${config.getTransactionAPI.action}&
-		contractaddress=${contractAddress}&
-		address=${address}&
-		startblock=${config.getTransactionAPI.startblock}&
-		endblock=${config.getTransactionAPI.endblock}&
-		page=${config.getTransactionAPI.page}&
-		offset=${config.getTransactionAPI.offset}&
-		sort=${config.getTransactionAPI.sort}&
-		apikey=${config.etherscanApiKey}`
+		`${config.getTransactionAPI.endpoint}?module=${config.getTransactionAPI.module}&action=${config.getTransactionAPI.action}&contractaddress=${contractAddress}&address=${address}&startblock=${config.getTransactionAPI.startblock}&endblock=${config.getTransactionAPI.endblock}&page=${config.getTransactionAPI.page}&offset=${config.getTransactionAPI.offset}&sort=${config.getTransactionAPI.sort}&apikey=${config.etherscanApiKey}`
 	);
 	if (transactions.data.message === 'OK') return transactions.data;
 	return { err: transactions.data.result, err_msg: transactions.data.message };
