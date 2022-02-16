@@ -253,9 +253,9 @@ export const getLoginHistoryService = async (id) => {
 
 export const sendTokensToUserService = async (recipient, amount) => {
 	try {
-		// recipient - walletaddress
-		// amount - 5/2 * 10^18
 		logger.info('Inside sendTokenToUser Service');
+		const amountToBeTransferred = (amount / 2) * 10 ** 18;
+		console.log(amountToBeTransferred);
 		const nonce = await web3.eth.getTransactionCount(
 			`${config.contractAccounts.deploymentAddress}`,
 			'pending'
