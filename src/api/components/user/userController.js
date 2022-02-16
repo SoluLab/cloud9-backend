@@ -16,7 +16,7 @@ import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
 import config from '../../config/config.js';
 
-export const signUp = async (req, res) => {
+export const signUpController = async (req, res) => {
 	logger.info('Inside signUp Controller');
 	try {
 		const data = await createUser(req.body);
@@ -37,7 +37,7 @@ export const signUp = async (req, res) => {
 	}
 };
 
-export const getUserProfile = async (req, res) => {
+export const getUserProfileController = async (req, res) => {
 	logger.info('Inside getUserProfile Controller');
 	try {
 		const data = await getUser(res.locals.user._id);
@@ -58,7 +58,7 @@ export const getUserProfile = async (req, res) => {
 	}
 };
 
-export const updateUserProfile = async (req, res) => {
+export const updateUserProfileController = async (req, res) => {
 	logger.info('Inside updateUserProfile Controller');
 	try {
 		const data = await updateUser(res.locals.user._id, req.body);
@@ -79,7 +79,7 @@ export const updateUserProfile = async (req, res) => {
 	}
 };
 
-export const userLogin = async (req, res) => {
+export const userLoginController = async (req, res) => {
 	logger.info('Inside userLogin Controller');
 	try {
 		logger.info('Inside userLogin Controller');
@@ -105,7 +105,7 @@ export const userLogin = async (req, res) => {
 	}
 };
 
-export const userLogout = async (req, res) => {
+export const userLogoutController = async (req, res) => {
 	try {
 		logger.info('Inside userLogout Controller');
 		res.cookie('jwt', 'loggedout', {
@@ -157,7 +157,7 @@ export const isLoggedIn = async (req, res, next) => {
 	}
 };
 
-export const storeWalletAddress = async (req, res) => {
+export const storeWalletAddressController = async (req, res) => {
 	try {
 		logger.info('Inside storeWalletAddress Controller');
 		const data = await saveWalletAddress(res.locals.user.email, req.body);
@@ -177,7 +177,7 @@ export const storeWalletAddress = async (req, res) => {
 	}
 };
 
-export const getCheckout = async (req, res) => {
+export const getCheckoutController = async (req, res) => {
 	try {
 		logger.info('Inside getCheckout Controller');
 		const data = await checkout(req.body);
@@ -198,7 +198,7 @@ export const getCheckout = async (req, res) => {
 	}
 };
 
-export const getTransactions = async (req, res) => {
+export const getTransactionsController = async (req, res) => {
 	try {
 		logger.info('Inside getTransactions Controller');
 		const data = await transactions(req.query);
@@ -220,7 +220,7 @@ export const getTransactions = async (req, res) => {
 	}
 };
 
-export const getLoginHistory = async (req, res) => {
+export const getLoginHistoryController = async (req, res) => {
 	try {
 		logger.info('Inside getLoginHistory Controller');
 		const data = await loginHistory(res.locals.user._id);
