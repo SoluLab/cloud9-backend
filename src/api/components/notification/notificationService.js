@@ -34,3 +34,21 @@ export const pushNotifications = async (data) => {
 	await getMessaging().send(message);
 	return;
 };
+
+export const updateNotifications = async (userId, queryString) => {
+	const { markAll, id } = queryString;
+	let data;
+	if (markAll)
+		data = await Notification.updateMany(
+			{ userId: userId, isRead: false },
+			{ $set: { isRead: true } }
+		);
+	if (!markAll)
+		data = await Notification.updateOne({ _id: id }, { isRead: true });
+	if (!data)
+		return {
+			err_msg: 'Something went wrong please try again',
+			statusCode: 400,
+		};
+	return data;
+};
