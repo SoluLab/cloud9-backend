@@ -28,7 +28,7 @@ const hashPassword = async (password) => {
 	return password;
 };
 
-export const createUser = async (data) => {
+export const signUpService = async (data) => {
 	try {
 		const { email, name } = data;
 		let { password } = data;
@@ -52,7 +52,7 @@ export const createUser = async (data) => {
 	}
 };
 
-export const getUser = async (id) => {
+export const getUserProfileService = async (id) => {
 	try {
 		const user = await User.findById(id);
 		if (user.loginHistory.length > 0) user.loginHistory = user.loginHistory[0];
@@ -62,7 +62,7 @@ export const getUser = async (id) => {
 	}
 };
 
-export const updateUser = async (id, body) => {
+export const updateUserProfileService = async (id, body) => {
 	try {
 		const user = await User.findOne({ _id: id }).select('+password');
 		if (body.newPassword) {
@@ -91,7 +91,7 @@ export const updateUser = async (id, body) => {
 	}
 };
 
-export const login = async (body, clientIp) => {
+export const userLoginService = async (body, clientIp) => {
 	try {
 		const ip = clientIp.split(':').pop();
 		const location = geoip.lookup(ip);
@@ -139,7 +139,7 @@ export const login = async (body, clientIp) => {
 	}
 };
 
-export const loggedIn = async (token) => {
+export const loggedInService = async (token) => {
 	try {
 		// verify token
 		const verifiedToken = await promisify(jwt.verify)(token, config.jwtSecret);
@@ -166,7 +166,7 @@ export const loggedIn = async (token) => {
 	}
 };
 
-export const saveWalletAddress = async (email, body) => {
+export const storeWalletAddressService = async (email, body) => {
 	try {
 		const { walletAddress } = body;
 		if (!walletAddress)
@@ -186,7 +186,7 @@ export const saveWalletAddress = async (email, body) => {
 	}
 };
 
-export const checkout = async (data) => {
+export const getCheckoutService = async (data) => {
 	try {
 		const stripe = Stripe(config.stripeSecretKey);
 
@@ -219,7 +219,7 @@ export const checkout = async (data) => {
 	}
 };
 
-export const transactions = async (queryString) => {
+export const getTransactionsService = async (queryString) => {
 	try {
 		const { contractAddress, address } = queryString;
 		const transactions = await axios.get(
@@ -235,7 +235,7 @@ export const transactions = async (queryString) => {
 	}
 };
 
-export const loginHistory = async (id) => {
+export const getLoginHistoryService = async (id) => {
 	try {
 		const user = await User.findById(id, 'loginHistory').lean();
 		if (!user) return;
@@ -251,7 +251,7 @@ export const loginHistory = async (id) => {
 	}
 };
 
-export const sendTokensToUser = async (recipient, amount) => {
+export const sendTokensToUserService = async (recipient, amount) => {
 	try {
 		// recipient - walletaddress
 		// amount - 5/2 * 10^18
@@ -298,7 +298,7 @@ export const sendTokensToUser = async (recipient, amount) => {
 	}
 };
 
-export const getWalletBalance = async (walletAddress, tokenAddress) => {
+export const getWalletBalanceService = async (walletAddress, tokenAddress) => {
 	try {
 		logger.info('Inside getWalletBalance Service');
 
@@ -322,7 +322,7 @@ export const getWalletBalance = async (walletAddress, tokenAddress) => {
 	}
 };
 
-export const getPieChartDetails = async () => {
+export const getPieChartDetailsService = async () => {
 	try {
 		logger.info('Inside getPieChartDetails Service');
 		const totalSupply = '100%';
