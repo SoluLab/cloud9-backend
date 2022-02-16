@@ -1,4 +1,8 @@
-import { getnotifications, pushNotifications } from './notificationService.js';
+import {
+	getnotifications,
+	pushNotifications,
+	updateNotifications,
+} from './notificationService.js';
 import logger from '../../config/logger.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 
@@ -31,5 +35,25 @@ export const pushNotification = async (data) => {
 		return;
 	} catch (err) {
 		logger.info(err.messsage);
+	}
+};
+
+export const updateUserNotifications = async (req, res) => {
+	logger.info('Inside updateUserNotifications Controller');
+	try {
+		const data = await updateNotifications(res.locals.user._id, req.query);
+		if (data.err_msg)
+			return handleError({
+				res,
+				statusCode: data.statusCode,
+				err_msg: data.err_msg,
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Notifications updated successfully',
+		});
+	} catch (err) {
+		logger.error(err.message);
 	}
 };
