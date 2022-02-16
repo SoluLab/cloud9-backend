@@ -9,6 +9,7 @@ export const validateSignup = async (req, res, next) => {
 			email: Joi.string().required(),
 			password: Joi.string().min(6).max(20).required(),
 			confirmPassword: Joi.string().required().valid(Joi.ref('password')),
+			name: Joi.string().required(),
 		});
 		const validation = schema.validate(req.body, { abortEarly: false });
 
@@ -39,6 +40,7 @@ export const validateUpdateUserProfile = async (req, res, next) => {
 			userName: Joi.string().allow('').optional(),
 			firstName: Joi.string().allow('').optional(),
 			lastName: Joi.string().allow('').optional(),
+			name: Joi.string().allow('').optional(),
 		});
 		const validation = schema.validate(req.body, { abortEarly: false });
 
