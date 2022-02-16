@@ -1,16 +1,16 @@
 import {
-	createUser,
-	getUser,
-	updateUser,
-	login,
-	loggedIn,
-	saveWalletAddress,
-	checkout,
-	transactions,
-	loginHistory,
-	sendTokensToUser,
-	getWalletBalance,
-	getPieChartDetails,
+	signUpService,
+	getUserProfileService,
+	updateUserProfileService,
+	userLoginService,
+	loggedInService,
+	storeWalletAddressService,
+	getCheckoutService,
+	getTransactionsService,
+	getLoginHistoryService,
+	sendTokensToUserService,
+	getWalletBalanceService,
+	getPieChartDetailsService,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -19,7 +19,7 @@ import config from '../../config/config.js';
 export const signUpController = async (req, res) => {
 	logger.info('Inside signUp Controller');
 	try {
-		const data = await createUser(req.body);
+		const data = await signUpService(req.body);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -40,7 +40,7 @@ export const signUpController = async (req, res) => {
 export const getUserProfileController = async (req, res) => {
 	logger.info('Inside getUserProfile Controller');
 	try {
-		const data = await getUser(res.locals.user._id);
+		const data = await getUserProfileService(res.locals.user._id);
 		if (!data)
 			return handleError({
 				res,
@@ -61,7 +61,7 @@ export const getUserProfileController = async (req, res) => {
 export const updateUserProfileController = async (req, res) => {
 	logger.info('Inside updateUserProfile Controller');
 	try {
-		const data = await updateUser(res.locals.user._id, req.body);
+		const data = await updateUserProfileService(res.locals.user._id, req.body);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -83,7 +83,7 @@ export const userLoginController = async (req, res) => {
 	logger.info('Inside userLogin Controller');
 	try {
 		logger.info('Inside userLogin Controller');
-		const data = await login(req.body, req.ip);
+		const data = await userLoginService(req.body, req.ip);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -128,12 +128,12 @@ export const isLoggedIn = async (req, res, next) => {
 		let user = {};
 		if (config.nodeEnv === 'development') {
 			if (req.headers.authorization)
-				user = await loggedIn(req.headers.authorization.split(' ')[1]);
+				user = await loggedInService(req.headers.authorization.split(' ')[1]);
 			if (!req.headers.authorization)
 				user = { err_msg: 'Please login', statusCode: 401 };
 		}
 		if (config.nodeEnv === 'production') {
-			if (req.cookies.jwt) user = await loggedIn(req.cookies.jwt);
+			if (req.cookies.jwt) user = await loggedInService(req.cookies.jwt);
 			if (!req.cookies.jwt) user = { err_msg: 'Please login', statusCode: 401 };
 		}
 
@@ -160,7 +160,10 @@ export const isLoggedIn = async (req, res, next) => {
 export const storeWalletAddressController = async (req, res) => {
 	try {
 		logger.info('Inside storeWalletAddress Controller');
-		const data = await saveWalletAddress(res.locals.user.email, req.body);
+		const data = await storeWalletAddressService(
+			res.locals.user.email,
+			req.body
+		);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -180,7 +183,7 @@ export const storeWalletAddressController = async (req, res) => {
 export const getCheckoutController = async (req, res) => {
 	try {
 		logger.info('Inside getCheckout Controller');
-		const data = await checkout(req.body);
+		const data = await getCheckoutService(req.body);
 		return handleResponse({
 			res,
 			statusCode: 200,
@@ -201,7 +204,7 @@ export const getCheckoutController = async (req, res) => {
 export const getTransactionsController = async (req, res) => {
 	try {
 		logger.info('Inside getTransactions Controller');
-		const data = await transactions(req.query);
+		const data = await getTransactionsService(req.query);
 		if (data.err_msg)
 			return handleError({
 				res,
@@ -223,7 +226,7 @@ export const getTransactionsController = async (req, res) => {
 export const getLoginHistoryController = async (req, res) => {
 	try {
 		logger.info('Inside getLoginHistory Controller');
-		const data = await loginHistory(res.locals.user._id);
+		const data = await getLoginHistoryService(res.locals.user._id);
 		if (!data)
 			return handleError({
 				res,
@@ -245,7 +248,10 @@ export const getLoginHistoryController = async (req, res) => {
 export const sendTokensToUserController = async (req, res) => {
 	try {
 		logger.info('Inside getReceipt Controller');
-		const data = await sendTokensToUser(req.body.recipient, req.body.amount);
+		const data = await sendTokensToUserService(
+			req.body.recipient,
+			req.body.amount
+		);
 		if (!data)
 			return handleError({
 				res,
@@ -268,7 +274,7 @@ export const sendTokensToUserController = async (req, res) => {
 export const getWalletBalanceController = async (req, res) => {
 	try {
 		const { walletAddress, tokenAddress } = req.params;
-		const data = await getWalletBalance(walletAddress, tokenAddress);
+		const data = await getWalletBalanceService(walletAddress, tokenAddress);
 		if (!data)
 			return handleError({
 				res,
@@ -290,7 +296,7 @@ export const getWalletBalanceController = async (req, res) => {
 
 export const getPieChartDetailsController = async (req, res) => {
 	try {
-		const data = await getPieChartDetails();
+		const data = await getPieChartDetailsService();
 		if (!data)
 			return handleError({
 				res,
