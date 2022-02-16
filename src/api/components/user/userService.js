@@ -212,7 +212,7 @@ export const sendTokensToUser = async (recipient, amount) => {
 	try {
 		// recipient - walletaddress
 		// amount - 5/2 * 10^18
-		console.log('Inside sendTokenToUser Service');
+		logger.info('Inside sendTokenToUser Service');
 		const nonce = await web3.eth.getTransactionCount(
 			`${config.contractAccounts.deploymentAddress}`,
 			'pending'
