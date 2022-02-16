@@ -29,7 +29,7 @@ const hashPassword = async (password) => {
 };
 
 export const createUser = async (data) => {
-	const { email } = data;
+	const { email, name } = data;
 	let { password } = data;
 	const user = await User.findOne({ email });
 	if (user) return { err_msg: 'User already exists', statusCode: 201 };
@@ -38,13 +38,14 @@ export const createUser = async (data) => {
 	const newUser = await User.create({
 		email,
 		password,
+		name,
 	});
 	if (!newUser)
 		return {
 			err_msg: 'Something went wrong please try again',
 			statusCode: 400,
 		};
-	return newUser;
+	return { _id: newUser._id, email: newUser.email, name: newUser.name };
 };
 
 export const getUser = async (id) => {
@@ -86,7 +87,7 @@ export const login = async (body, clientIp) => {
 		region: location?.country,
 	};
 	const { email, password } = body;
-	let user = await User.findOne({ email }, 'loginHistory email').select(
+	let user = await User.findOne({ email }, 'loginHistory email name').select(
 		'+password'
 	);
 	if (!user)
@@ -118,7 +119,7 @@ export const login = async (body, clientIp) => {
 	loginData.status = 'success';
 	user.loginHistory.unshift(loginData);
 	user.save();
-	user = { email: user.email, _id: user._id };
+	user = { email: user.email, _id: user._id, name: user.name };
 	return { token, cookieOptions, user };
 };
 
