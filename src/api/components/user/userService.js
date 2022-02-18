@@ -317,6 +317,7 @@ export const getWalletBalanceService = async (walletAddress, tokenAddress) => {
 			totalSupply: totalSupply / 10 ** decimals,
 			userBalance: userBalance / 10 ** decimals,
 			walletAddress,
+			dollarValue: '1Usd',
 		};
 	} catch (error) {
 		throw error;
