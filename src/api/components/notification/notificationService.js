@@ -23,13 +23,12 @@ export const pushNotifications = async (data) => {
 
 	await Notification.create({
 		...notificationData,
-		userId: res.locals.user._id,
+		userId: data.userId,
 	});
 
 	const message = {
 		notification: notificationData,
-		token:
-			'eKU31mQsKU9q:APA91bE7VB0knfs7keWGtfUOWCCfc7-kEeSL4Z90gvys9s0BJul74nIG_H9WDO6RTtdlNYuehKoHU8c3zjL3PwipFttLVA798oVStYFWC8uSA9uF6Sy3-vsQi4qfpGVgxfWZeYQKUS5l',
+		token: data.token,
 	};
 	await getMessaging().send(message);
 	return;
