@@ -251,11 +251,18 @@ export const getLoginHistoryService = async (id) => {
 	}
 };
 
-export const sendTokensToUserService = async (recipient, amount) => {
+export const sendTokensToUserService = async (
+	recipient,
+	amount,
+	phaseValue
+) => {
 	try {
 		logger.info('Inside sendTokenToUser Service');
-		const amountToBeTransferred = (amount / 2) * 10 ** 18;
-		console.log(amountToBeTransferred);
+		const calculatedValue = (amount * phaseValue) / 2;
+		const amountToBeTransferred = web3.utils.toWei(
+			calculatedValue.toString(),
+			'ether'
+		);
 		const nonce = await web3.eth.getTransactionCount(
 			`${config.contractAccounts.deploymentAddress}`,
 			'pending'
@@ -271,7 +278,7 @@ export const sendTokensToUserService = async (recipient, amount) => {
 			to: `${config.contracts.icoContract}`,
 			value: '0x00',
 			data: contract.methods
-				.sendTokens(recipient, web3.utils.toBN(amount))
+				.sendTokens(recipient, web3.utils.toBN(amountToBeTransferred))
 				.encodeABI(),
 		};
 
@@ -316,6 +323,8 @@ export const getWalletBalanceService = async (walletAddress, tokenAddress) => {
 			decimals,
 			totalSupply: totalSupply / 10 ** decimals,
 			userBalance: userBalance / 10 ** decimals,
+			walletAddress,
+			dollarValue: (userBalance / 10 ** decimals) * 0.0075,
 		};
 	} catch (error) {
 		throw error;
