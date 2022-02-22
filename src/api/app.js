@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 
-if (process.env.NODE_ENV === 'development') {
+if (config.nodeEnv === 'development') {
 	app.use(morgan('dev'));
 }
 

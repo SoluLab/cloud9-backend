@@ -6,3 +6,7 @@ logs
 .env.local
 lib
 dist
+artifacts/
+cache/
+abi
+firebaseAdminSDK.json
