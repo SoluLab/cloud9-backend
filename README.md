@@ -80,9 +80,9 @@ Try running some of the following tasks:
 ```shell
 npx hardhat clean
 npx hardhat compile
-npx hardhat run scripts/c9ICO.js
-npx hardhat run scripts/c9Token.js
-npx hardhat verify --network mumbai DEPLOYED_CONTRACT_ADDRESS "CloudNineICO"
+npx hardhat run --network mumbai scripts/c9Token.js
+npx hardhat run --network mumbai scripts/c9ICO.js
+npx hardhat verify --network mumbai DEPLOYED_CONTRACT_ADDRESS "CloudNine"
 ```
 
 ***

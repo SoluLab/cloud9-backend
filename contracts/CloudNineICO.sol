@@ -9,10 +9,10 @@ contract CloudNineICO is Crowdsale, Ownable {
     using SafeMath for uint256;
 
     uint256 public publicSale1Quantity = 100000000 * 10**18;
-    uint256 public publicSale2Quantity = 150000000 * 10**18;
-    uint256 public publicSale3Quantity = 250000000 * 10**18;
-    uint256 public publicSale4Quantity = 250000000 * 10**18;
-    uint256 public publicSale5Quantity = 250000000 * 10**18;
+    uint256 public publicSale2Quantity = 250000000 * 10**18;
+    uint256 public publicSale3Quantity = 300000000 * 10**18;
+    uint256 public publicSale4Quantity = 450000000 * 10**18;
+    uint256 public publicSale5Quantity = 500000000 * 10**18;
     uint256 public publicSale6Quantity = 2000000000 * 10**18;
 
     enum ICOStage {
@@ -135,13 +135,6 @@ contract CloudNineICO is Crowdsale, Ownable {
         external
         onlyOwner
     {
-        uint256 tokensToSend = _getTokenAmount(weiAmount);
-        _processPurchase(recipient, tokensToSend);
-        // require(
-        //     tokensToSend <= token().balanceOf(address(this)),
-        //     "Amount > Balance."
-        // );
-
-        // token().transfer(recipient, tokensToSend);
+        _processPurchase(recipient, weiAmount);
     }
 }

@@ -248,10 +248,8 @@ export const getLoginHistoryController = async (req, res) => {
 export const sendTokensToUserController = async (req, res) => {
 	try {
 		logger.info('Inside getReceipt Controller');
-		const data = await sendTokensToUserService(
-			req.body.recipient,
-			req.body.amount
-		);
+		const { recipient, amount, phaseValue } = req.body;
+		const data = await sendTokensToUserService(recipient, amount, phaseValue);
 		if (!data)
 			return handleError({
 				res,
