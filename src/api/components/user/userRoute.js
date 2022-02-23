@@ -38,7 +38,7 @@ router.get('/transactions', isLoggedIn, getTransactionsController);
 router.get('/loginHistory', isLoggedIn, getLoginHistoryController);
 router.post('/sendTokensToUser', isLoggedIn, sendTokensToUserController);
 router.get(
-	'/getWalletBalance/:tokenAddress/:walletAddress',
+	'/getWalletBalance/:walletAddress',
 	isLoggedIn,
 	getWalletBalanceController
 );
