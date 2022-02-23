@@ -13,11 +13,13 @@ import {
 	sendTokensToUserController,
 	getWalletBalanceController,
 	getPieChartDetailsController,
+	uploadProfilePicController,
 } from './userController.js';
 import {
 	validateSignup,
 	validateUpdateUserProfile,
 } from '../../middleware/validator.js';
+import { uploadImage } from '../../middleware/uploadImage.js';
 
 const router = express.Router();
 
@@ -41,5 +43,11 @@ router.get(
 	'/getWalletBalance/:walletAddress',
 	isLoggedIn,
 	getWalletBalanceController
+);
+router.post(
+	'/uploadProfilePic',
+	isLoggedIn,
+	uploadImage,
+	uploadProfilePicController
 );
 export default router;
