@@ -14,6 +14,7 @@ import {
 	getWalletBalanceController,
 	getPieChartDetailsController,
 	uploadProfilePicController,
+	getTokenSaleProcessController,
 } from './userController.js';
 import {
 	validateSignup,
@@ -50,4 +51,5 @@ router.post(
 	uploadImage,
 	uploadProfilePicController
 );
+router.get('/getTokenSaleProcess', isLoggedIn, getTokenSaleProcessController);
 export default router;

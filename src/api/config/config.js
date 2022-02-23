@@ -29,6 +29,7 @@ export default {
 	contracts: {
 		tokenContract: process.env.CLOUD9_TOKEN_CONTRACT_ADDRESS,
 		icoContract: process.env.CLOUD9_ICO_CONTRACT_ADDRESS,
+		tokenHolderAccount: process.env.TOKEN_HOLDER_ACCOUNT,
 	},
 	contractAccounts: {
 		deploymentAddress: process.env.DEPLOYMENT_ADDRESS,

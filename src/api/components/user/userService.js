@@ -399,3 +399,26 @@ export const uploadProfilePicService = async (file, user) => {
 	});
 	return { msg: 'Image uploaded successfully' };
 };
+
+export const getTokenSaleProcessService = async () => {
+	try {
+		logger.info('Inside getTokenSaleProcessService Service');
+		const icoTotalSupply = 3600000000;
+		const decimals = await tokenContract.methods.decimals().call();
+		const holderAvailableBalance = await tokenContract.methods
+			.balanceOf(config.contracts.tokenHolderAccount)
+			.call();
+
+		const holderAvailableBalanceInDecimal =
+			holderAvailableBalance / 10 ** decimals;
+		const holderSpentBalance = icoTotalSupply - holderAvailableBalanceInDecimal;
+
+		return {
+			'Total ICO Supply': icoTotalSupply,
+			'Available Balance': Number(holderAvailableBalanceInDecimal.toFixed(4)),
+			'Amount Spent': Number(holderSpentBalance.toFixed(4)),
+		};
+	} catch (error) {
+		throw error;
+	}
+};
