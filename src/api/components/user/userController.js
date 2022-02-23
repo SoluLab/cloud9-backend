@@ -12,6 +12,7 @@ import {
 	getWalletBalanceService,
 	getPieChartDetailsService,
 	uploadProfilePicService,
+	getTokenSaleProcessService,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -337,5 +338,27 @@ export const uploadProfilePicController = async (req, res) => {
 			statusCode: 400,
 			err,
 		});
+	}
+};
+
+export const getTokenSaleProcessController = async (req, res) => {
+	try {
+		const data = await getTokenSaleProcessService();
+		if (!data)
+			return handleError({
+				res,
+				statusCode: 400,
+				err,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Token Sale Details',
+			data,
+		});
+	} catch (error) {
+		logger.info(error.message);
+		return handleError({ res, error });
 	}
 };
