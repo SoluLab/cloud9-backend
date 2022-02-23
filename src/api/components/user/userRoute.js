@@ -51,5 +51,5 @@ router.post(
 	uploadImage,
 	uploadProfilePicController
 );
-router.get('/getTokenSaleProcess', isLoggedIn, getTokenSaleProcessController);
+router.get('/getTokenSaleProcess', getTokenSaleProcessController);
 export default router;
