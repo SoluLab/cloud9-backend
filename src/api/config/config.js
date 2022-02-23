@@ -43,7 +43,7 @@ export default {
 		endblock: '99999999',
 		page: '1',
 		offset: '10000',
-		sort: 'asc',
+		sort: 'desc',
 	},
 	awsS3: {
 		accessKeyId: process.env.AWS_ACCESS_KEY_ID,
