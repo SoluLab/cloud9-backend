@@ -305,7 +305,7 @@ export const sendTokensToUserService = async (
 	}
 };
 
-export const getWalletBalanceService = async (walletAddress, tokenAddress) => {
+export const getWalletBalanceService = async (walletAddress) => {
 	try {
 		logger.info('Inside getWalletBalance Service');
 
