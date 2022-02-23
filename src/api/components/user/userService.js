@@ -12,6 +12,7 @@ import axios from 'axios';
 import { default as config } from '../../config/config.js';
 import geoip from 'geoip-lite';
 import logger from '../../config/logger.js';
+import Aws from 'aws-sdk';
 
 const web3 = new Web3(new Web3.providers.HttpProvider(config.alchemyUrl));
 const contract = new web3.eth.Contract(
@@ -371,4 +372,30 @@ export const getPieChartDetailsService = async () => {
 	} catch (error) {
 		throw error;
 	}
+};
+
+export const uploadProfilePicService = async (file, user) => {
+	// Create s3 instance
+	const s3 = new Aws.S3({
+		accessKeyId: config.awsS3.accessKeyId,
+		secretAccessKey: config.awsS3.secretAccessKey,
+	});
+
+	const params = {
+		Bucket: config.awsS3.bucketName,
+		Key: `${user.userName}.jpeg`,
+		Body: file.buffer,
+		ACL: 'public-read-write',
+		ContentType: 'image/jpeg',
+	};
+
+	// Upload image with s3
+	s3.upload(params, async (err, data) => {
+		if (data.Location) {
+			await User.findByIdAndUpdate(user._id, {
+				profilePic: data.Location,
+			});
+		}
+	});
+	return { msg: 'Image uploaded successfully' };
 };
