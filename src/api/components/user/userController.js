@@ -272,7 +272,7 @@ export const sendTokensToUserController = async (req, res) => {
 export const getWalletBalanceController = async (req, res) => {
 	try {
 		const { walletAddress, tokenAddress } = req.params;
-		const data = await getWalletBalanceService(walletAddress, tokenAddress);
+		const data = await getWalletBalanceService(walletAddress);
 		if (!data)
 			return handleError({
 				res,
