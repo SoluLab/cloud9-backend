@@ -11,6 +11,7 @@ import {
 	sendTokensToUserService,
 	getWalletBalanceService,
 	getPieChartDetailsService,
+	uploadProfilePicService,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -219,7 +220,7 @@ export const getTransactionsController = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.messsage);
+		logger.info(err.message);
 	}
 };
 
@@ -241,7 +242,7 @@ export const getLoginHistoryController = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.messsage);
+		logger.info(err.message);
 	}
 };
 
@@ -264,7 +265,7 @@ export const sendTokensToUserController = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		logger.info(err.messsage);
+		logger.info(err.message);
 		return handleError({ res, err });
 	}
 };
@@ -287,7 +288,7 @@ export const getWalletBalanceController = async (req, res) => {
 			data,
 		});
 	} catch (error) {
-		logger.info(error.messsage);
+		logger.info(error.message);
 		return handleError({ res, error });
 	}
 };
@@ -309,7 +310,32 @@ export const getPieChartDetailsController = async (req, res) => {
 			data,
 		});
 	} catch (error) {
-		logger.info(error.messsage);
+		logger.info(error.message);
 		return handleError({ res, error });
+	}
+};
+
+export const uploadProfilePicController = async (req, res) => {
+	try {
+		if (!req.file)
+			return handleError({
+				res,
+				statusCode: 201,
+				err_msg: 'Please upload image',
+			});
+		const data = await uploadProfilePicService(req.file, res.locals.user);
+		if (data)
+			return handleResponse({
+				res,
+				statusCode: 200,
+				msg: data.msg,
+			});
+	} catch (err) {
+		logger.info(err.message);
+		return handleError({
+			res,
+			statusCode: 400,
+			err,
+		});
 	}
 };
