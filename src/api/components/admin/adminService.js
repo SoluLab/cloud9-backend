@@ -54,11 +54,17 @@ export const getAllUsersService = async () => {
 		user = await Promise.all(
 			user.map(async (element) => {
 				const { walletAddress } = element;
-				const walletBalance = await getWalletBalanceService(walletAddress);
-				const { userBalance, symbol } = walletBalance;
-				Object.assign(element, { userBalance });
-				Object.assign(element, { symbol });
-				return element;
+				if (walletAddress) {
+					const walletBalance = await getWalletBalanceService(walletAddress);
+					const { userBalance, symbol } = walletBalance;
+					Object.assign(element, { userBalance });
+					Object.assign(element, { symbol });
+					return element;
+				} else {
+					Object.assign(element, { userBalance: '0' });
+					Object.assign(element, { symbol: 'C9' });
+					return element;
+				}
 			})
 		);
 
