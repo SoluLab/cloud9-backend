@@ -101,9 +101,10 @@ export const userLoginService = async (body, clientIp) => {
 			region: location?.country,
 		};
 		const { email, password } = body;
-		let user = await User.findOne({ email }, 'loginHistory email name').select(
-			'+password'
-		);
+		let user = await User.findOne(
+			{ email },
+			'loginHistory email name isAdmin'
+		).select('+password');
 		if (!user)
 			return {
 				err_msg: `User doesn't exist with this email please signUp`,
@@ -118,7 +119,7 @@ export const userLoginService = async (body, clientIp) => {
 		}
 
 		const token = jwt.sign(
-			{ id: user._id, email: user.email },
+			{ id: user._id, email: user.email, isAdmin: user.isAdmin },
 			config.jwtSecret,
 			{
 				expiresIn: config.jetExpiresIn,
@@ -133,7 +134,13 @@ export const userLoginService = async (body, clientIp) => {
 		loginData.status = 'success';
 		user.loginHistory.unshift(loginData);
 		user.save();
-		user = { email: user.email, _id: user._id, name: user.name };
+		user = {
+			email: user.email,
+			_id: user._id,
+			name: user.name,
+			isAdmin: user.isAdmin,
+		};
+		console.log(user);
 		return { token, cookieOptions, user };
 	} catch (error) {
 		throw error;
