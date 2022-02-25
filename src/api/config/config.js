@@ -23,6 +23,11 @@ export default {
 			useCreateIndex: true,
 		},
 	},
+	adminCreds: {
+		adminEmail: process.env.ADMIN_EMAIL,
+		adminPassword: process.env.ADMIN_PASSWORD,
+		adminName: process.env.ADMIN_NAME,
+	},
 	alchemyUrl: process.env.ALCHEMY_URL,
 	gasPriceEstimateUrl: process.env.MATIC_GAS_STATION,
 	etherscanApiKey: process.env.ETHER_SCAN_API_KEY,

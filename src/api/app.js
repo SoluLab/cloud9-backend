@@ -7,8 +7,11 @@ import { handleError } from './helpers/responseHandler.js';
 import router from './components/index.js';
 import config from './config/config.js';
 import logger from './config/logger.js';
+import { signUpService } from './components/admin/adminService.js';
 
 dotenv.config();
+
+await signUpService();
 
 const app = express();
 
