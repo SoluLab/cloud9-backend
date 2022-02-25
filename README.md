@@ -89,4 +89,5 @@ npx hardhat verify --network mumbai DEPLOYED_CONTRACT_ADDRESS "CloudNine"
 
 ## **Documentation**
 
+* Postman Collection Link: [cloud9-postman-backend](https://www.getpostman.com/collections/ec6b486123b46705d7a2)
 * Postman Documentation Link: [cloud9-backend](https://documenter.getpostman.com/view/3955547/UVeMK4r2)
