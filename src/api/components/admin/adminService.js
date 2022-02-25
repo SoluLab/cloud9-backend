@@ -5,6 +5,7 @@ import CloudNineToken from '../../../../artifacts/contracts/CloudNine.sol/ERC20.
 import User from '../user/userModel.js';
 import { default as config } from '../../config/config.js';
 import logger from '../../config/logger.js';
+import axios from 'axios';
 
 const web3 = new Web3(new Web3.providers.HttpProvider(config.alchemyUrl));
 const contract = new web3.eth.Contract(
@@ -87,6 +88,20 @@ export const getWalletBalanceService = async (walletAddress) => {
 			userBalance: userBalance / 10 ** decimals,
 			walletAddress,
 			dollarValue: (userBalance / 10 ** decimals) * 0.0075,
+		};
+	} catch (error) {
+		throw error;
+	}
+};
+export const getAllTransactionsService = async () => {
+	try {
+		const transactions = await axios.get(
+			`${config.getTransactionAPI.endpoint}?module=${config.getTransactionAPI.module}&action=${config.getTransactionAPI.action}&contractaddress=${config.contracts.tokenContract}&address=${config.contracts.icoContract}&startblock=${config.getTransactionAPI.startblock}&endblock=${config.getTransactionAPI.endblock}&page=${config.getTransactionAPI.page}&offset=${config.getTransactionAPI.offset}&sort=${config.getTransactionAPI.sort}&apikey=${config.etherscanApiKey}`
+		);
+		if (transactions.data.message === 'OK') return transactions.data;
+		return {
+			err: transactions.data.result,
+			err_msg: transactions.data.message,
 		};
 	} catch (error) {
 		throw error;
