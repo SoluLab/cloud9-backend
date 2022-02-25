@@ -351,7 +351,6 @@ export const getPieChartDetailsService = async () => {
 		const icoPhase6 = '20%';
 		const teamTokens = '3%';
 		const founder = '10%';
-		const avilesFamily = '0%';
 		const influencersBounty = '2%';
 		const lendingProgram = '8%';
 		const legal = '4%';
@@ -368,7 +367,6 @@ export const getPieChartDetailsService = async () => {
 			'ICO Round 6': icoPhase6,
 			'Team Tokens': teamTokens,
 			Founders: founder,
-			'Aviles Familiy': avilesFamily,
 			'Influencers/Bounty': influencersBounty,
 			'Lending Program': lendingProgram,
 			'~Misc/Legal': legal,
