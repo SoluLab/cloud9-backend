@@ -144,7 +144,7 @@ export const userLoginService = async (body, clientIp) => {
 			email: user.email,
 			_id: user._id,
 			firstName: user.firstName,
-			lastName: user.lastname,
+			lastName: user.lastName,
 			isAdmin: user.isAdmin,
 		};
 		return { token, cookieOptions, user };
