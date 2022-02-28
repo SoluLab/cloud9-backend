@@ -31,7 +31,7 @@ const hashPassword = async (password) => {
 
 export const signUpService = async (data) => {
 	try {
-		const { email, name } = data;
+		const { email, firstName, lastName } = data;
 		let { password } = data;
 		const user = await User.findOne({ email });
 		if (user) return { err_msg: 'User already exists', statusCode: 201 };
@@ -40,14 +40,20 @@ export const signUpService = async (data) => {
 		const newUser = await User.create({
 			email,
 			password,
-			name,
+			firstName,
+			lastName,
 		});
 		if (!newUser)
 			return {
 				err_msg: 'Something went wrong please try again',
 				statusCode: 400,
 			};
-		return { _id: newUser._id, email: newUser.email, name: newUser.name };
+		return {
+			_id: newUser._id,
+			email: newUser.email,
+			firstName: newUser.firstName,
+			lastName: newUser.lastName,
+		};
 	} catch (error) {
 		throw error;
 	}
