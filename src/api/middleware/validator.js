@@ -9,7 +9,8 @@ export const validateSignup = async (req, res, next) => {
 			email: Joi.string().required(),
 			password: Joi.string().min(6).max(20).required(),
 			confirmPassword: Joi.string().required().valid(Joi.ref('password')),
-			name: Joi.string().required(),
+			firstName: Joi.string().required(),
+			lastName: Joi.string().required(),
 		});
 		const validation = schema.validate(req.body, { abortEarly: false });
 
