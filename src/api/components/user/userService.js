@@ -109,7 +109,7 @@ export const userLoginService = async (body, clientIp) => {
 		const { email, password } = body;
 		let user = await User.findOne(
 			{ email },
-			'loginHistory email name isAdmin'
+			'loginHistory email firstName lastName isAdmin'
 		).select('+password');
 		if (!user)
 			return {
