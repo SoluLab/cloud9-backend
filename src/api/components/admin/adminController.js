@@ -43,7 +43,6 @@ export const getAllTransactionsController = async (req, res) => {
 			data,
 		});
 	} catch (err) {
-		console.log(err);
 		logger.error(err.message);
 	}
 };

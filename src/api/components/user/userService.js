@@ -143,10 +143,10 @@ export const userLoginService = async (body, clientIp) => {
 		user = {
 			email: user.email,
 			_id: user._id,
-			name: user.name,
+			firstName: user.firstName,
+			lastName: user.lastname,
 			isAdmin: user.isAdmin,
 		};
-		console.log(user);
 		return { token, cookieOptions, user };
 	} catch (error) {
 		throw error;
