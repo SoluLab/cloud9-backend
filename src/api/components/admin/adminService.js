@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import Web3 from 'web3';
-import CloudNineICO from '../../../../artifacts/contracts/CloudNineICO.sol/CloudNineICO.json';
+import CloudNineICO from '../../../../artifacts/contracts/CloudNineICOFlat.sol/CloudNineICO.json';
 import CloudNineToken from '../../../../artifacts/contracts/CloudNine.sol/ERC20.json';
 import User from '../user/userModel.js';
 import { default as config } from '../../config/config.js';

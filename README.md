@@ -83,6 +83,7 @@ npx hardhat compile
 npx hardhat run --network mumbai scripts/c9Token.js
 npx hardhat run --network mumbai scripts/c9ICO.js
 npx hardhat verify --network mumbai DEPLOYED_CONTRACT_ADDRESS "CloudNine"
+npx hardhat verify --network mumbai DEPLOYED_CONTRACT_ADDRESS "CloudNineICO"
 ```
 
 ***

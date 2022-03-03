@@ -19,10 +19,8 @@ module.exports = {
 	},
 	networks: {
 		mumbai: {
-			url: 'https://polygon-mumbai.g.alchemy.com/v2/9wlUi2MKDoF84RDsN4PBFxYyXcHYovsP',
-			accounts: [
-				'0d8e00bff210f964181a269ba3ac6e764db51d81d5dbe72afa266a05eacf77d0',
-			],
+			url: process.env.ALCHEMY_URL,
+			accounts: [process.env.DEPLOYMENT_PRIVATE_KEY],
 		},
 	},
 	etherscan: {
