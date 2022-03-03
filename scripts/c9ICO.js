@@ -6,7 +6,7 @@ async function main() {
 	const cloud9ICO = await Cloud9ICO.deploy(
 		'1',
 		'0x3941Fa693608240B82B241670Be1e301a7871c94',
-		'0xe87546503256d704Bb59345Fe0DE5a033459C312'
+		'0xF4D5B20e565a8834d63be5672fC4Fc769d0Aa2E6'
 	);
 
 	await cloud9ICO.deployed();
