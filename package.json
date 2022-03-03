@@ -4,6 +4,7 @@
   "description": "Cloud9 ICO Backend with eosio.js sdk integration",
   "private": true,
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node --experimental-json-modules ./src/api/bin/www",
     "dev": "nodemon --experimental-json-modules ./src/api/bin/www"
@@ -28,6 +29,7 @@
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.3.0",
     "@poanet/solidity-flattener": "^3.0.6",
+    "@openzeppelin/contracts": "^2.5.1",
     "app-root-path": "^3.0.0",
     "aws-sdk": "^2.1079.0",
     "axios": "^0.22.0",
