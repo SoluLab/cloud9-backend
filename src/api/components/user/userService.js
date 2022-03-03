@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 import Stripe from 'stripe';
 import Web3 from 'web3';
-import CloudNineICO from '../../../../artifacts/contracts/CloudNineICO.sol/CloudNineICO.json';
+import CloudNineICO from '../../../../artifacts/contracts/CloudNineICOFlat.sol/CloudNineICO.json';
 import CloudNineToken from '../../../../artifacts/contracts/CloudNine.sol/ERC20.json';
 import Common from '@ethereumjs/common';
 import Tx from '@ethereumjs/tx';
@@ -348,6 +348,13 @@ export const getWalletBalanceService = async (walletAddress) => {
 export const getPieChartDetailsService = async () => {
 	try {
 		logger.info('Inside getPieChartDetails Service');
+		console.log('owner', await contract.methods.owner().call());
+		console.log(
+			'isOwner',
+			await contract.methods
+				.isOwner()
+				.call({ from: config.contractAccounts.deploymentAddress })
+		);
 		const totalSupply = '100%';
 		const icoPhase1 = '1%';
 		const icoPhase2 = '2.5%';
