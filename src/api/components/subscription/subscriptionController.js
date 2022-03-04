@@ -7,17 +7,17 @@ export const subscribeEmailController = async (req, res) => {
 	try {
 		logger.info('Inside subscribeEmail Controller');
 		const data = await subscribeEmailService(req.body.email);
-		if (data[0].statusCode === 202)
-			return handleResponse({
+		if (data.err_msg)
+			return handleError({
 				res,
-				statusCode: 200,
-				msg: 'Subscribed successfully',
+				statusCode: data.statusCode,
+				err_msg: data.err_msg,
 			});
-		return handleError({
+		return handleResponse({
 			res,
-			statusCode: 400,
-			err,
-			err_msg: 'Something went wrong',
+			statusCode: 200,
+			msg: 'Subscribed successfully',
+			data: data.email,
 		});
 	} catch (error) {
 		logger.info(error.message);
