@@ -28,8 +28,9 @@
   "dependencies": {
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.3.0",
-    "@poanet/solidity-flattener": "^3.0.6",
     "@openzeppelin/contracts": "^2.5.1",
+    "@poanet/solidity-flattener": "^3.0.6",
+    "@sendgrid/mail": "^7.6.1",
     "app-root-path": "^3.0.0",
     "aws-sdk": "^2.1079.0",
     "axios": "^0.22.0",
