@@ -55,4 +55,8 @@ export default {
 		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 		bucketName: process.env.AWS_BUCKET_NAME,
 	},
+	sendGrid:{
+		apiKey:  process.env.SENDGRID_API_KEY,
+		sender:  process.env.SENDGRID_SENDER_EMAIL
+	}
 };
