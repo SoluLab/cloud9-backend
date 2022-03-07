@@ -27,6 +27,11 @@ const tokenContract = new web3.eth.Contract(
 
 const stripe = Stripe(config.stripeSecretKey);
 
+export const CurrencyDenomination = {
+	usd: 100,
+	inr: 100,
+};
+
 const hashPassword = async (password) => {
 	password = await bcrypt.hash(password, 12);
 	return password;
@@ -203,7 +208,7 @@ export const storeWalletAddressService = async (email, body) => {
 	}
 };
 
-export const getCheckoutService = async (data, __user) => {
+export const getCheckoutService = async (data) => {
 	try {
 		// Add card by creating paymentMethod
 		// eslint-disable-next-line camelcase
@@ -231,8 +236,7 @@ export const getCheckoutService = async (data, __user) => {
 			description: 'Cloud9',
 		});
 
-		const paymentReceipt = new App.Models.PaymentReceipt({
-			_user: __user._id.toString(),
+		const paymentReceipt = new PaymentReceipt({
 			paymentIntentId: paymentIntent.id,
 			amount: _amount, // Should be saving amount in standard denomination.
 			currency,
@@ -286,7 +290,6 @@ export const webhookService = async (rawBody, stripeSignature) => {
 	// Retrieve the event by verifying the signature using the raw body and secret.
 	try {
 		let event;
-
 		try {
 			event = stripe.webhooks.constructEvent(
 				rawBody,
@@ -302,14 +305,14 @@ export const webhookService = async (rawBody, stripeSignature) => {
 		const data = event.data;
 		const eventType = event.type;
 
-		let pi;
+		let paymentIntent = null;
 
 		if (eventType === 'payment_intent.succeeded') {
 			// Cast the event into a PaymentIntent to make use of the types.
-			pi = data.object;
+			paymentIntent = data.object;
 		} else if (eventType === 'payment_intent.payment_failed') {
 			// Cast the event into a PaymentIntent to make use of the types.
-			pi = data.object;
+			paymentIntent = data.object;
 		}
 
 		// Return success and do nothing if paymentIntent is null
@@ -334,10 +337,9 @@ export const webhookService = async (rawBody, stripeSignature) => {
 			paymentIntent.status === 'succeeded' ? true : false;
 		const balanceTransactionId =
 			paymentIntent.charges.data[0].balance_transaction;
-		const balanceTransaction =
-			await StripeHelper.stripe.balanceTransactions.retrieve(
-				balanceTransactionId
-			);
+		const balanceTransaction = await stripe.balanceTransactions.retrieve(
+			balanceTransactionId
+		);
 		paymentReceipt.amount =
 			balanceTransaction.net !== undefined
 				? balanceTransaction.net /
@@ -440,13 +442,6 @@ export const getWalletBalanceService = async (walletAddress) => {
 export const getPieChartDetailsService = async () => {
 	try {
 		logger.info('Inside getPieChartDetails Service');
-		console.log('owner', await contract.methods.owner().call());
-		console.log(
-			'isOwner',
-			await contract.methods
-				.isOwner()
-				.call({ from: config.contractAccounts.deploymentAddress })
-		);
 		const totalSupply = '100%';
 		const icoPhase1 = '1%';
 		const icoPhase2 = '2.5%';
