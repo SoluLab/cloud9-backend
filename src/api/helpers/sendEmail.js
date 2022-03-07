@@ -11,7 +11,8 @@ export const sendMail = async (recipient, data) => {
 			to: recipient,
 			from: config.sendGrid.sender,
 			subject: data.subject,
-			text: data.text,
+			text: data?.text,
+			html: data?.html,
 		};
 		return await sgMail.send(msg);
 	} catch (error) {
