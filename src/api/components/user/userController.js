@@ -13,6 +13,8 @@ import {
 	getPieChartDetailsService,
 	uploadProfilePicService,
 	getTokenSaleProcessService,
+	forgotPasswordService,
+	resetPasswordService,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -360,5 +362,52 @@ export const getTokenSaleProcessController = async (req, res) => {
 	} catch (error) {
 		logger.info(error.message);
 		return handleError({ res, error });
+	}
+};
+
+export const forgotPasswordController = async (req, res) => {
+	try {
+		logger.info('Inside forgotPassword Controller');
+		const data = await forgotPasswordService(req.body.email);
+		if (data.err_msg)
+			return handleError({
+				res,
+				statusCode: data.statusCode,
+				err_msg: data.err_msg,
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Email sent successfully',
+			data: data.email,
+		});
+	} catch (error) {
+		logger.info(error.message);
+		return handleError({ res, error });
+	}
+};
+
+export const resetPasswordController = async (req, res) => {
+	try {
+		logger.info('Inside resetPassword Controller');
+		const data = await resetPasswordService(
+			req.query.token,
+			req.body.newPassword
+		);
+		if (data.err_msg)
+			return handleError({
+				res,
+				statusCode: data.statusCode,
+				err_msg: data.err_msg,
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Password reset successfull',
+			data: data.email,
+		});
+	} catch (error) {
+		logger.info(error.message);
+		return handleError({ res, err_msg: error.message });
 	}
 };
