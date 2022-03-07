@@ -186,7 +186,7 @@ export const storeWalletAddressController = async (req, res) => {
 export const getCheckoutController = async (req, res) => {
 	try {
 		logger.info('Inside getCheckout Controller');
-		const data = await getCheckoutService(req.body, req.locals.user);
+		const data = await getCheckoutService(req.body);
 		return handleResponse({
 			res,
 			statusCode: 200,
@@ -208,7 +208,7 @@ export const webhookController = async (req, res) => {
 	try {
 		const data = await webhookService(
 			req.rawBody,
-			req.headers?.['strip-signature']
+			req.headers?.['stripe-signature']
 		);
 		if (data?.error)
 			return handleError({
