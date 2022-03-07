@@ -28,7 +28,13 @@ if (config.nodeEnv === 'development') {
 // app.use('/api', limiter);
 
 app.use(cors());
-app.use(express.json());
+app.use(
+	express.json({
+		verify: (req, res, buf) => {
+			req['rawBody'] = buf;
+		},
+	})
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(config.apiVersionUrl, router);
 app.get(config.apiVersionUrl, () => {
