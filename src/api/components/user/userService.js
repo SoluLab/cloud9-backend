@@ -8,6 +8,7 @@ import CloudNineToken from '../../../../artifacts/contracts/CloudNine.sol/ERC20.
 import Common from '@ethereumjs/common';
 import Tx from '@ethereumjs/tx';
 import User from './userModel.js';
+import PaymentReceipt from './paymentReceiptModel.js';
 import axios from 'axios';
 import { default as config } from '../../config/config.js';
 import geoip from 'geoip-lite';
@@ -23,6 +24,8 @@ const tokenContract = new web3.eth.Contract(
 	CloudNineToken.abi,
 	config.contracts.tokenContract
 );
+
+const stripe = Stripe(config.stripeSecretKey);
 
 const hashPassword = async (password) => {
 	password = await bcrypt.hash(password, 12);
@@ -200,13 +203,11 @@ export const storeWalletAddressService = async (email, body) => {
 	}
 };
 
-export const getCheckoutService = async (data) => {
+export const getCheckoutService = async (data, __user) => {
 	try {
-		const stripe = Stripe(config.stripeSecretKey);
-
 		// Add card by creating paymentMethod
 		// eslint-disable-next-line camelcase
-		const { number, exp_month, exp_year, cvc } = data;
+		/* const { number, exp_month, exp_year, cvc } = data;
 		const { id } = await stripe.paymentMethods.create({
 			type: 'card',
 			card: {
@@ -215,19 +216,35 @@ export const getCheckoutService = async (data) => {
 				exp_year,
 				cvc,
 			},
-		});
+		}); */
+		const { walletAddress, amount: _amount, paymentMethodType } = data;
+		const amount = _amount * 100;
+
+		const currency = 'usd';
 
 		// Create PaymentIntent
 		// eslint-disable-next-line camelcase
-		const { client_secret } = await stripe.paymentIntents.create({
-			amount: 2000,
-			currency: 'usd',
-			payment_method: id,
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount,
+			currency,
+			payment_method_types: [paymentMethodType],
 			description: 'Cloud9',
 		});
 
+		const paymentReceipt = new App.Models.PaymentReceipt({
+			_user: __user._id.toString(),
+			paymentIntentId: paymentIntent.id,
+			amount: _amount, // Should be saving amount in standard denomination.
+			currency,
+			paymentMethodType,
+			walletAddress,
+		});
+
+		// Save the payment receipt document. This payment has not been confirmed yet.
+		await paymentReceipt.save();
+
 		// eslint-disable-next-line camelcase
-		return client_secret;
+		return paymentIntent.client_secret;
 	} catch (error) {
 		throw error;
 	}
@@ -265,13 +282,88 @@ export const getLoginHistoryService = async (id) => {
 	}
 };
 
-export const sendTokensToUserService = async (
-	recipient,
-	amount,
-	phaseValue
-) => {
+export const webhookService = async (rawBody, stripeSignature) => {
+	// Retrieve the event by verifying the signature using the raw body and secret.
+	try {
+		let event;
+
+		try {
+			event = stripe.webhooks.constructEvent(
+				rawBody,
+				stripeSignature,
+				config.stripeWebhookSecret
+			);
+		} catch (err) {
+			// Return an error object on failed verification.
+			return { error: 'Webhook signature verification failed.' };
+		}
+
+		// Extract the data from the event.
+		const data = event.data;
+		const eventType = event.type;
+
+		let pi;
+
+		if (eventType === 'payment_intent.succeeded') {
+			// Cast the event into a PaymentIntent to make use of the types.
+			pi = data.object;
+		} else if (eventType === 'payment_intent.payment_failed') {
+			// Cast the event into a PaymentIntent to make use of the types.
+			pi = data.object;
+		}
+
+		// Return success and do nothing if paymentIntent is null
+		if (paymentIntent === null) {
+			return {};
+		}
+
+		// Return bad request error if an error occurred in webhook verification.
+		if (paymentIntent?.error) {
+			return { error: paymentIntent.error };
+		}
+
+		const paymentReceipt = await PaymentReceipt.findOne({
+			paymentIntentId: paymentIntent.id,
+		});
+
+		if (!paymentReceipt) {
+			return { error: 'PaymentReceipt not found.' };
+		}
+
+		paymentReceipt.received =
+			paymentIntent.status === 'succeeded' ? true : false;
+		const balanceTransactionId =
+			paymentIntent.charges.data[0].balance_transaction;
+		const balanceTransaction =
+			await StripeHelper.stripe.balanceTransactions.retrieve(
+				balanceTransactionId
+			);
+		paymentReceipt.amount =
+			balanceTransaction.net !== undefined
+				? balanceTransaction.net /
+				  CurrencyDenomination[balanceTransaction.currency]
+				: paymentReceipt.amount;
+
+		// Save the payment receipt document. This payment has not been confirmed yet.
+		await paymentReceipt.save();
+
+		if (paymentReceipt.received) {
+			await sendTokensToUserService(
+				paymentReceipt.walletAddress,
+				paymentReceipt.amount
+			);
+		}
+
+		return {};
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const sendTokensToUserService = async (recipient, amount) => {
 	try {
 		logger.info('Inside sendTokenToUser Service');
+		const phaseValue = await contract.methods.rate().call();
 		const calculatedValue = (amount * phaseValue) / 2;
 		const amountToBeTransferred = web3.utils.toWei(
 			calculatedValue.toString(),
