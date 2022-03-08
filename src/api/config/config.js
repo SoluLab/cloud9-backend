@@ -7,6 +7,7 @@ export default {
 	jwtSecret: process.env.JWT_SECRET,
 	jetExpiresIn: process.env.JWT_EXPIRES_IN,
 	stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+	stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
 	apiVersionUrl: '/api/v1',
 	db: {
 		str:
@@ -55,8 +56,8 @@ export default {
 		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 		bucketName: process.env.AWS_BUCKET_NAME,
 	},
-	sendGrid:{
-		apiKey:  process.env.SENDGRID_API_KEY,
-		sender:  process.env.SENDGRID_SENDER_EMAIL
-	}
+	sendGrid: {
+		apiKey: process.env.SENDGRID_API_KEY,
+		sender: process.env.SENDGRID_SENDER_EMAIL,
+	},
 };

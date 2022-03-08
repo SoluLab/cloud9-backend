@@ -19,6 +19,7 @@ import {
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
 import config from '../../config/config.js';
+import { webhookService } from './userService.js';
 
 export const signUpController = async (req, res) => {
 	logger.info('Inside signUp Controller');
@@ -202,6 +203,29 @@ export const getCheckoutController = async (req, res) => {
 			err,
 			err_msg: 'Stripe error',
 		});
+	}
+};
+
+export const webhookController = async (req, res) => {
+	try {
+		const data = await webhookService(
+			req.rawBody,
+			req.headers?.['stripe-signature']
+		);
+		if (data?.error)
+			return handleError({
+				res,
+				statusCode: 400,
+				err: data.error,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+		});
+	} catch (error) {
+		logger.info(error.message);
+		return handleError({ res, error });
 	}
 };
 

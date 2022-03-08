@@ -23,6 +23,7 @@ import {
 	validateUpdateUserProfile,
 } from '../../middleware/validator.js';
 import { uploadImage } from '../../middleware/uploadImage.js';
+import { webhookController } from './userController.js';
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ router.post('/storeWalletAddress', isLoggedIn, storeWalletAddressController);
 router.post('/checkout', isLoggedIn, getCheckoutController);
 router.get('/transactions', isLoggedIn, getTransactionsController);
 router.get('/loginHistory', isLoggedIn, getLoginHistoryController);
-router.post('/sendTokensToUser', isLoggedIn, sendTokensToUserController);
+router.post('/stripe-webhook', webhookController);
 router.get(
 	'/getWalletBalance/:walletAddress',
 	isLoggedIn,
