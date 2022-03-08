@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
 	userName: String,
 	profilePic: String,
 	name: String,
+	companyName: String,
 	password: {
 		type: String,
 		required: true,
