@@ -15,6 +15,8 @@ import {
 	getPieChartDetailsController,
 	uploadProfilePicController,
 	getTokenSaleProcessController,
+	forgotPasswordController,
+	resetPasswordController,
 } from './userController.js';
 import {
 	validateSignup,
@@ -53,4 +55,7 @@ router.post(
 	uploadProfilePicController
 );
 router.get('/getTokenSaleProcess', getTokenSaleProcessController);
+router.post('/forgotPassword', forgotPasswordController);
+router.post('/resetPassword', resetPasswordController);
+
 export default router;

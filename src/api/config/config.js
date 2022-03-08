@@ -60,4 +60,5 @@ export default {
 		apiKey: process.env.SENDGRID_API_KEY,
 		sender: process.env.SENDGRID_SENDER_EMAIL,
 	},
+	passwordResetURL: process.env.PASSWORD_RESET_URL,
 };
