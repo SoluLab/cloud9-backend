@@ -545,7 +545,7 @@ export const forgotPasswordService = async (email) => {
 				expiresIn: 30 * 60 * 1000,
 			}
 		);
-		const resetLink = `url?token=${token}`;
+		const resetLink = `${config.passwordResetURL}?token=${token}`;
 		const data = await sendMail(email, {
 			subject: 'Reset Password',
 			html: `
