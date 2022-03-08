@@ -40,7 +40,7 @@ const hashPassword = async (password) => {
 
 export const signUpService = async (data) => {
 	try {
-		const { email, firstName, lastName } = data;
+		const { email, firstName, lastName, companyName } = data;
 		let { password } = data;
 		const user = await User.findOne({ email });
 		if (user) return { err_msg: 'User already exists', statusCode: 201 };
@@ -51,6 +51,7 @@ export const signUpService = async (data) => {
 			password,
 			firstName,
 			lastName,
+			companyName,
 		});
 		if (!newUser)
 			return {
@@ -62,6 +63,7 @@ export const signUpService = async (data) => {
 			email: newUser.email,
 			firstName: newUser.firstName,
 			lastName: newUser.lastName,
+			companyName: newUser.companyName,
 		};
 	} catch (error) {
 		throw error;
@@ -211,24 +213,11 @@ export const storeWalletAddressService = async (email, body) => {
 
 export const getCheckoutService = async (data) => {
 	try {
-		// Add card by creating paymentMethod
-		// eslint-disable-next-line camelcase
-		/* const { number, exp_month, exp_year, cvc } = data;
-		const { id } = await stripe.paymentMethods.create({
-			type: 'card',
-			card: {
-				number,
-				exp_month,
-				exp_year,
-				cvc,
-			},
-		}); */
 		const { walletAddress, amount: _amount, paymentMethodType } = data;
 		const amount = _amount * 100;
 
 		const currency = 'usd';
 
-		// Create PaymentIntent
 		// eslint-disable-next-line camelcase
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount,
