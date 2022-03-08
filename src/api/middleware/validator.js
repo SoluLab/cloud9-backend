@@ -11,6 +11,7 @@ export const validateSignup = async (req, res, next) => {
 			confirmPassword: Joi.string().required().valid(Joi.ref('password')),
 			firstName: Joi.string().required(),
 			lastName: Joi.string().required(),
+			companyName: Joi.string().required(),
 		});
 		const validation = schema.validate(req.body, { abortEarly: false });
 
@@ -42,6 +43,7 @@ export const validateUpdateUserProfile = async (req, res, next) => {
 			firstName: Joi.string().allow('').optional(),
 			lastName: Joi.string().allow('').optional(),
 			name: Joi.string().allow('').optional(),
+			companyName: Joi.string().allow('').optional(),
 		});
 		const validation = schema.validate(req.body, { abortEarly: false });
 
