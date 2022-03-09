@@ -1,8 +1,11 @@
 import express from 'express';
-import { createAdminApi } from './adminController.js';
+import {
+	getAllUsersController,
+	getAllTransactionsController,
+} from './adminController.js';
 
 const router = express.Router();
 
-router.post('/', createAdminApi);
-
+router.get('/getAllUsers', getAllUsersController);
+router.get('/getAllTransactions', getAllTransactionsController);
 export default router;
