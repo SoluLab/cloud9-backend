@@ -32,7 +32,12 @@ export const signUpService = async () => {
 		const newUser = await User.create({
 			email: config.adminCreds.adminEmail,
 			password: password,
-			name: config.adminCreds.adminName,
+			firstName: config.adminCreds.adminFirstName,
+			lastName: config.adminCreds.adminLastName,
+			name:
+				config.adminCreds.adminFirstName +
+				' ' +
+				config.adminCreds.adminLastName,
 			isAdmin: true,
 		});
 		if (!newUser)
@@ -40,7 +45,12 @@ export const signUpService = async () => {
 				err_msg: 'Something went wrong please try again',
 				statusCode: 400,
 			};
-		return { _id: newUser._id, email: newUser.email, name: newUser.name };
+		return {
+			_id: newUser._id,
+			email: newUser.email,
+			firstName: newUser.firstName,
+			lastName: newUser.lastName,
+		};
 	} catch (error) {
 		throw error;
 	}
