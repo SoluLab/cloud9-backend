@@ -10,13 +10,13 @@ import {
 	getCheckoutController,
 	getTransactionsController,
 	getLoginHistoryController,
-	sendTokensToUserController,
 	getWalletBalanceController,
 	getPieChartDetailsController,
 	uploadProfilePicController,
 	getTokenSaleProcessController,
 	forgotPasswordController,
 	resetPasswordController,
+	getStatisticsController
 } from './userController.js';
 import {
 	validateSignup,
@@ -57,5 +57,6 @@ router.post(
 router.get('/getTokenSaleProcess', getTokenSaleProcessController);
 router.post('/forgotPassword', forgotPasswordController);
 router.post('/resetPassword', resetPasswordController);
+router.get('/getStatistics', getStatisticsController)
 
 export default router;
