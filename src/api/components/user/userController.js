@@ -15,6 +15,7 @@ import {
 	getTokenSaleProcessService,
 	forgotPasswordService,
 	resetPasswordService,
+	getStatisticsService,
 } from './userService.js';
 import { handleResponse, handleError } from '../../helpers/responseHandler.js';
 import logger from '../../config/logger.js';
@@ -433,5 +434,26 @@ export const resetPasswordController = async (req, res) => {
 	} catch (error) {
 		logger.info(error.message);
 		return handleError({ res, err_msg: error.message });
+	}
+};
+export const getStatisticsController = async (req, res) => {
+	try {
+		const data = await getStatisticsService();
+		if (!data)
+			return handleError({
+				res,
+				statusCode: 400,
+				err,
+				err_msg: 'Something went wrong',
+			});
+		return handleResponse({
+			res,
+			statusCode: 200,
+			msg: 'Token Statistics',
+			data,
+		});
+	} catch (error) {
+		logger.info(error.message);
+		return handleError({ res, error });
 	}
 };
