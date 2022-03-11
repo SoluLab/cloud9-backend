@@ -34,8 +34,16 @@ Phase | Percentage | Tokens Allocated
 ## **Smart Contracts**
 Smart contracts are deployed on [Polygon Testnet](https://mumbai.polygonscan.com)
 
-- Cloud9 Token Contract - [0xa2F276F9B5E7dF96271398140399925e655e31c3](https://mumbai.polygonscan.com/address/0xa2F276F9B5E7dF96271398140399925e655e31c3)
-- Cloud9 ICO Contract - [0x406e5FF58036eeE55E9c11a9927943130350d3Ac](https://mumbai.polygonscan.com/address/0x406e5FF58036eeE55E9c11a9927943130350d3Ac)
+- Cloud9 Token Contract - [0xF4D5B20e565a8834d63be5672fC4Fc769d0Aa2E6](https://mumbai.polygonscan.com/address/0xF4D5B20e565a8834d63be5672fC4Fc769d0Aa2E6)
+- Cloud9 ICO Contract - [0x2Eb8DD45f8FEF0a3E99074e722049B4A2143E2b0](https://mumbai.polygonscan.com/address/0x2Eb8DD45f8FEF0a3E99074e722049B4A2143E2b0)
+- Deployer Address - [0x811b4f70939bB95e3072B70721ffb8B9D9dEc3BA](https://mumbai.polygonscan.com/address/0x811b4f70939bB95e3072B70721ffb8B9D9dEc3BA)
+
+Smart contracts are deployed on [Polygon Mainnet](https://polygonscan.com/)
+
+- Cloud9 Token Contract - [0x25fA04D7bF275691aF1937360e3deEe031e4ea0E](https://polygonscan.com/address/0x25fA04D7bF275691aF1937360e3deEe031e4ea0E)
+- Cloud9 ICO Contract - [0x44C9a4416ecac4F57E34586a3317a636969f857b](https://polygonscan.com/address/0x25fA04D7bF275691aF1937360e3deEe031e4ea0E)
+- Deployer Address - [0x3941Fa693608240B82B241670Be1e301a7871c94](https://polygonscan.com/address/0x25fA04D7bF275691aF1937360e3deEe031e4ea0E)
+
 ***
 ## **Project Setup**
 
