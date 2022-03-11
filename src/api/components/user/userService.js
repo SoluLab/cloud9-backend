@@ -382,8 +382,8 @@ export const sendTokensToUserService = async (recipient, amount) => {
 
 		const common = Common.default.custom({
 			name: 'matic',
-			networkId: 80001,
-			chainId: 80001,
+			networkId: 137,
+			chainId: 137,
 		});
 
 		const tx = Tx.Transaction.fromTxData(txData, { common });
@@ -632,6 +632,36 @@ export const resetPasswordService = async (token, newPassword) => {
 				statusCode: 400,
 			};
 		return data;
+	} catch (error) {
+		throw error;
+	}
+};
+export const getStatisticsService = async () => {
+	try {
+		logger.info('Inside getStatisticsService Service');
+		const icoTotalSupply = 3600000000;
+		const phaseValue = await contract.methods.rate().call();
+		const holderAvailableBalance = await tokenContract.methods
+			.balanceOf(config.contracts.tokenHolderAccount)
+			.call();
+		const decimals = await tokenContract.methods.decimals().call();
+
+		const holderAvailableBalanceInDecimal =
+			holderAvailableBalance / 10 ** decimals;
+		const holderSpentBalance = icoTotalSupply - holderAvailableBalanceInDecimal;
+
+		const soldPercentage = (
+			(holderSpentBalance / icoTotalSupply) *
+			100
+		).toFixed(4);
+
+		return {
+			targetCap: icoTotalSupply,
+			sold: Number(holderSpentBalance.toFixed(4)),
+			phaseValue: phaseValue,
+			percentage: soldPercentage,
+			converstionRate: `1 MATIC = $2 = ${phaseValue} C9`,
+		};
 	} catch (error) {
 		throw error;
 	}
