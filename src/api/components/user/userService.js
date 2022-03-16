@@ -531,7 +531,7 @@ export const forgotPasswordService = async (email) => {
 			{ id: user._id, email: user.email },
 			config.jwtSecret,
 			{
-				expiresIn: 30 * 60 * 1000,
+				expiresIn: 5 * 60 * 1000,
 			}
 		);
 		const resetLink = `${config.passwordResetURL}?token=${token}`;
