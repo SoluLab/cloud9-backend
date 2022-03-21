@@ -210,8 +210,9 @@ export const getCheckoutController = async (req, res) => {
 export const webhookController = async (req, res) => {
 	try {
 		const data = await webhookService(
-			req.rawBody,
+			req.body,
 			req.headers?.['stripe-signature']
+			// req.headers?.['X-Body-Signature']
 		);
 		if (data?.error)
 			return handleError({
