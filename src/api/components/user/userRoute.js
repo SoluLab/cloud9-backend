@@ -42,7 +42,7 @@ router.post('/storeWalletAddress', isLoggedIn, storeWalletAddressController);
 router.post('/checkout', isLoggedIn, getCheckoutController);
 router.get('/transactions', isLoggedIn, getTransactionsController);
 router.get('/loginHistory', isLoggedIn, getLoginHistoryController);
-router.post('/stripe-webhook', webhookController);
+router.post('/ramp-webhook', webhookController);
 router.get(
 	'/getWalletBalance/:walletAddress',
 	isLoggedIn,
