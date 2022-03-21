@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 import Stripe from 'stripe';
 import Web3 from 'web3';
+import { verify } from 'crypto'
+import { readFileSync } from 'fs'
+import stableStringify from 'fast-json-stable-stringify'
+import path from 'path'
 import CloudNineICO from '../../../../artifacts/contracts/CloudNineICOFlat.sol/CloudNineICO.json';
 import CloudNineToken from '../../../../artifacts/contracts/CloudNine.sol/ERC20.json';
 import Common from '@ethereumjs/common';
@@ -213,32 +217,32 @@ export const storeWalletAddressService = async (email, body) => {
 
 export const getCheckoutService = async (data) => {
 	try {
-		const { walletAddress, amount: _amount, paymentMethodType } = data;
-		const amount = _amount * 100;
+		const { receiverAddress, amount: fiatValue, paymentMethodType, fiatCurrency } = data.purchase;
+		const amount = fiatValue;
 
-		const currency = 'usd';
+		const currency = fiatCurrency;
 
 		// eslint-disable-next-line camelcase
-		const paymentIntent = await stripe.paymentIntents.create({
+		/* const paymentIntent = await stripe.paymentIntents.create({
 			amount,
 			currency,
 			payment_method_types: [paymentMethodType],
 			description: 'Cloud9',
-		});
+		}); */
 
 		const paymentReceipt = new PaymentReceipt({
-			paymentIntentId: paymentIntent.id,
-			amount: _amount, // Should be saving amount in standard denomination.
+			paymentIntentId: data.purchase.id,
+			amount: fiatValue, // Should be saving amount in standard denomination.
 			currency,
 			paymentMethodType,
-			walletAddress,
+			walletAddress: receiverAddress,
 		});
 
 		// Save the payment receipt document. This payment has not been confirmed yet.
 		await paymentReceipt.save();
 
 		// eslint-disable-next-line camelcase
-		return paymentIntent.client_secret;
+		// return paymentIntent.client_secret;
 	} catch (error) {
 		throw error;
 	}
@@ -276,33 +280,51 @@ export const getLoginHistoryService = async (id) => {
 	}
 };
 
-export const webhookService = async (rawBody, stripeSignature) => {
+export const webhookService = async (rawBody, rampSignature) => {
 	// Retrieve the event by verifying the signature using the raw body and secret.
 	try {
-		let event;
-		try {
-			event = stripe.webhooks.constructEvent(
-				rawBody,
-				stripeSignature,
-				config.stripeWebhookSecret
+		// let event;
+
+		// For rampKey test environment
+		// const rampKey = readFileSync(`${path.resolve()}/ramp-public-test.pem`).toString();
+		// For production environment
+		// const rampKey = readFileSync(`${path.resolve()}/ramp-public-prod.pem`).toString();
+
+		const event = rawBody
+
+		//? Check if the api is fired from ramp SDK only
+		/* if (rawBody && rampSignature) {
+			const verified = verify(
+				'sha256',
+				Buffer.from(stableStringify(rawBody)),
+				rampKey,
+				Buffer.from(rampSignature, 'base64')
 			);
-		} catch (err) {
-			// Return an error object on failed verification.
-			return { error: 'Webhook signature verification failed.' };
-		}
+
+			if (verified) {
+				console.log('SUCCESS');
+				response.status(204).send();
+			} else {
+				console.error('ERROR: Invalid signature');
+				response.status(401).send();
+			}
+		} else {
+			console.error('ERROR: Wrong request structure');
+			response.status(401).send();
+		} */
 
 		// Extract the data from the event.
-		const data = event.data;
-		const eventType = event.type;
+		const data = event.purchase;
+		const eventType = event.type;	//  'CREATED' | 'RELEASED' | 'RETURNED' | 'ERROR'
 
 		let paymentIntent = null;
 
-		if (eventType === 'payment_intent.succeeded') {
+		if (eventType === 'RELEASED') {
 			// Cast the event into a PaymentIntent to make use of the types.
-			paymentIntent = data.object;
-		} else if (eventType === 'payment_intent.payment_failed') {
+			paymentIntent = data;
+		} else if (eventType === 'ERROR') {
 			// Cast the event into a PaymentIntent to make use of the types.
-			paymentIntent = data.object;
+			paymentIntent = data;
 		}
 
 		// Return success and do nothing if paymentIntent is null
@@ -311,7 +333,7 @@ export const webhookService = async (rawBody, stripeSignature) => {
 		}
 
 		// Return bad request error if an error occurred in webhook verification.
-		if (paymentIntent?.error) {
+		if (paymentIntent?.error) {	// for error we will directly get error
 			return { error: paymentIntent.error };
 		}
 
@@ -324,8 +346,9 @@ export const webhookService = async (rawBody, stripeSignature) => {
 		}
 
 		paymentReceipt.received =
-			paymentIntent.status === 'succeeded' ? true : false;
-		const balanceTransactionId =
+			paymentIntent.status === 'RELEASED' ? true : false;
+		//! TODO: ---> Don't know what needs to be set here
+		/* const balanceTransactionId =
 			paymentIntent.charges.data[0].balance_transaction;
 		const balanceTransaction = await stripe.balanceTransactions.retrieve(
 			balanceTransactionId
@@ -333,8 +356,9 @@ export const webhookService = async (rawBody, stripeSignature) => {
 		paymentReceipt.amount =
 			balanceTransaction.net !== undefined
 				? balanceTransaction.net /
-				  CurrencyDenomination[balanceTransaction.currency]
-				: paymentReceipt.amount;
+				CurrencyDenomination[balanceTransaction.currency]
+				: paymentReceipt.amount; */
+		//! <---
 
 		// Save the payment receipt document. This payment has not been confirmed yet.
 		await paymentReceipt.save();
